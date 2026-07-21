@@ -212,13 +212,13 @@
     }
 
     .tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      padding: 12px 14px 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-      flex-shrink: 0;
-    }
+       display: grid;
+       grid-template-columns: repeat(4, minmax(0, 1fr));
+       gap: 10px;
+       padding: 12px 14px 10px;
+       background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+       flex-shrink: 0;
+     }
 
     .tab,
     .icon-btn,
@@ -722,6 +722,137 @@
     .stagger:nth-child(2) { animation-delay: 0.10s; }
     .stagger:nth-child(3) { animation-delay: 0.16s; }
 
+    /* Sketch Styles */
+    .sketch-input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #sketchList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      margin-bottom: 16px;
+    }
+
+    .sketch-item {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .sketch-item-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .sketch-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sketch-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      width: 100%;
+    }
+
+    .sketch-editor.hidden { display: none; }
+
+    .sketch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sketch-title {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: 600 0.95rem/1 "Inter", sans-serif;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .sketch-title:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .sketch-canvas {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(213,194,140,0.18);
+      cursor: crosshair;
+      touch-action: none;
+      display: block;
+    }
+
+    .sketch-tools {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      width: 100%;
+    }
+
+    .sketch-color-picker,
+    .sketch-size-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .sketch-color-picker label,
+    .sketch-size-picker label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .sketch-color-picker input[type="color"] {
+      width: 40px;
+      height: 34px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .sketch-size-picker input[type="range"] {
+      flex: 1;
+      min-width: 80px;
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
@@ -751,7 +882,7 @@
         --page-pad-y: 14px;
       }
 
-      .tabs { gap: 6px; padding: 10px 10px 8px; }
+      .tabs { gap: 6px; padding: 10px 10px 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .tab { padding: 10px 8px; font-size: 0.8rem; }
       .icon-btn { width: 32px; height: 32px; }
       .ghost-btn { padding: 10px 12px; }
@@ -773,7 +904,7 @@
             <button id="continueBtn" class="home-btn" type="button">Continuer</button>
             <button id="newSessionBtn" class="home-btn" type="button">Nouvelle partie</button>
             <button id="loadSessionBtn" class="home-btn secondary" type="button">Charger partie</button>
-            <button id="deleteSessionBtn" class="home-btn secondary" type="button">Supprimer partie</button>
+            <button id="manageSessionBtn" class="home-btn secondary" type="button">Gestion des sauvegardes</button>
           </div>
         </div>
       </section>
@@ -800,6 +931,7 @@
           <button class="tab active" data-tab="0" type="button">Personnage</button>
           <button class="tab" data-tab="1" type="button">Inventaire</button>
           <button class="tab" data-tab="2" type="button">Dés</button>
+          <button class="tab" data-tab="3" type="button">Croquis</button>
         </nav>
 
         <div class="pages-wrap">
@@ -951,6 +1083,51 @@
                 </div>
               </div>
             </section>
+
+            <section class="page page4" aria-label="Page croquis">
+              <div class="hero-panel stagger">
+                <div class="section">
+                  <h2 class="section-title">Croquis</h2>
+                  <p class="section-note">Créez et sauvegardez vos croquis, plans et illustrations.</p>
+
+                  <div class="sketch-input-row">
+                    <input id="sketchNameInput" type="text" placeholder="Nom du nouveau croquis..." />
+                    <button id="newSketchBtn" class="round-add" type="button" aria-label="Nouveau croquis">+</button>
+                  </div>
+
+                  <div id="sketchList" aria-live="polite"></div>
+
+                  <div id="sketchEditor" class="sketch-editor hidden">
+                    <div class="sketch-header">
+                      <input id="sketchEditorTitle" type="text" class="sketch-title" placeholder="Nom du croquis" />
+                      <button id="closeSketchEditorBtn" class="icon-btn" type="button" aria-label="Fermer">✕</button>
+                    </div>
+                    <canvas id="sketchCanvas" class="sketch-canvas"></canvas>
+                    <div class="sketch-tools">
+                      <button id="clearSketchBtn" class="ghost-btn" type="button">Effacer tout</button>
+                      <button id="undoSketchBtn" class="ghost-btn" type="button">Annuler</button>
+                      <div class="sketch-color-picker">
+                        <label for="sketchColor">Couleur :</label>
+                        <input id="sketchColor" type="color" value="#000000" />
+                      </div>
+                      <div class="sketch-color-picker">
+                        <label for="sketchBgColor">Fond :</label>
+                        <input id="sketchBgColor" type="color" value="#ffffff" />
+                      </div>
+                      <div class="sketch-size-picker">
+                        <label for="sketchSize">Taille :</label>
+                        <input id="sketchSize" type="range" min="1" max="20" value="3" />
+                      </div>
+                      <button id="saveSketchBtn" class="primary-btn" type="button">Sauvegarder le croquis</button>
+                    </div>
+                  </div>
+
+                  <div class="inline-actions">
+                    <button id="exportSketchesBtn" class="ghost-btn" type="button">Exporter les croquis</button>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </section>
@@ -963,6 +1140,20 @@
           <div class="modal-actions">
             <button id="closeSessionModalBtn" class="ghost-btn" type="button">Fermer</button>
           </div>
+        </div>
+      </div>
+
+      <div id="manageSessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Gestion des sauvegardes</h2>
+          <p class="modal-text">Gérez vos sauvegardes et importez/exportez des fichiers.</p>
+          <div id="managedSessionList" class="session-list"></div>
+          <div class="modal-actions">
+            <button id="importSessionBtn" class="ghost-btn" type="button">Importer</button>
+            <button id="exportAllBtn" class="ghost-btn" type="button">Exporter</button>
+            <button id="closeManageSessionModalBtn" class="ghost-btn" type="button">Fermer</button>
+          </div>
+          <input id="fileImportInput" type="file" accept=".json" style="display:none;" />
         </div>
       </div>
 
@@ -1005,7 +1196,7 @@
       const continueBtn = document.getElementById('continueBtn');
       const newSessionBtn = document.getElementById('newSessionBtn');
       const loadSessionBtn = document.getElementById('loadSessionBtn');
-      const deleteSessionBtn = document.getElementById('deleteSessionBtn');
+      const manageSessionBtn = document.getElementById('manageSessionBtn');
       const backHomeBtn = document.getElementById('backHomeBtn');
       const saveIndicator = document.getElementById('saveIndicator');
 
@@ -1045,10 +1236,40 @@
       const cancelNewSessionBtn = document.getElementById('cancelNewSessionBtn');
       const confirmNewSessionBtn = document.getElementById('confirmNewSessionBtn');
 
+      // Manage sessions modal
+      const manageSessionModal = document.getElementById('manageSessionModal');
+      const managedSessionList = document.getElementById('managedSessionList');
+      const importSessionBtn = document.getElementById('importSessionBtn');
+      const exportAllBtn = document.getElementById('exportAllBtn');
+      const closeManageSessionModalBtn = document.getElementById('closeManageSessionModalBtn');
+      const fileImportInput = document.getElementById('fileImportInput');
+
+      // Sketch elements
+      const sketchNameInput = document.getElementById('sketchNameInput');
+      const newSketchBtn = document.getElementById('newSketchBtn');
+      const sketchList = document.getElementById('sketchList');
+      const sketchEditor = document.getElementById('sketchEditor');
+      const sketchEditorTitle = document.getElementById('sketchEditorTitle');
+      const closeSketchEditorBtn = document.getElementById('closeSketchEditorBtn');
+      const sketchCanvas = document.getElementById('sketchCanvas');
+      const clearSketchBtn = document.getElementById('clearSketchBtn');
+      const undoSketchBtn = document.getElementById('undoSketchBtn');
+      const sketchColor = document.getElementById('sketchColor');
+      const sketchBgColor = document.getElementById('sketchBgColor');
+      const sketchSize = document.getElementById('sketchSize');
+      const saveSketchBtn = document.getElementById('saveSketchBtn');
+      const exportSketchesBtn = document.getElementById('exportSketchesBtn');
+
       let currentPage = 0;
       let currentSessionName = null;
       let saveMessageTimer = null;
       let sessionPendingDelete = null;
+      let sessionPendingManageDelete = null;
+
+      // Sketch state
+      let currentSketchId = null;
+      let sketchHistory = [];
+      let canvasContext = null;
 
       function showHome() {
         homeScreen.classList.remove('hidden');
@@ -1088,6 +1309,9 @@
       }
 
       function collectState() {
+        const store = getStore();
+        const currentSketches = (store[currentSessionName] && store[currentSessionName].sketches) || {};
+         
         return {
           sessionName: sessionNameInput.value.trim() || currentSessionName || 'Nouvelle partie',
           hpMax: document.getElementById('hpMax').value,
@@ -1100,7 +1324,8 @@
           save3: document.getElementById('save3').checked,
           notes: document.getElementById('notes').value,
           weapons: [...weaponsList.querySelectorAll('.weapon-text')].map(el => el.textContent),
-          inventory: [...inventoryList.querySelectorAll('.inventory-text')].map(el => el.textContent)
+          inventory: [...inventoryList.querySelectorAll('.inventory-text')].map(el => el.textContent),
+          sketches: currentSketches
         };
       }
 
@@ -1121,6 +1346,8 @@
 
         inventoryList.innerHTML = '';
         (data.inventory || []).forEach(text => inventoryList.appendChild(createInventoryItem(text)));
+
+        renderSketchList();
       }
 
       function buildEmptyState(name) {
@@ -1136,7 +1363,8 @@
           save3: false,
           notes: '',
           weapons: [],
-          inventory: []
+          inventory: [],
+          sketches: {}
         };
       }
 
@@ -1239,9 +1467,12 @@
       }
 
       function setPage(index) {
-        currentPage = Math.max(0, Math.min(2, index));
+        currentPage = Math.max(0, Math.min(3, index));
         pagesTrack.style.transform = `translateX(-${currentPage * 100}%)`;
         tabs.forEach((tab, i) => tab.classList.toggle('active', i === currentPage));
+        if (currentPage === 3) {
+          renderSketchList();
+        }
       }
 
       tabs.forEach(tab => {
@@ -1516,12 +1747,19 @@
       });
 
       confirmDeleteBtn.addEventListener('click', () => {
-        if (!sessionPendingDelete) return;
-        deleteSessionByName(sessionPendingDelete);
-        setIndicator(`Session supprimée : ${sessionPendingDelete}`);
-        sessionPendingDelete = null;
-        confirmDeleteModal.classList.remove('open');
-        closeSessionModal();
+        if (sessionPendingManageDelete) {
+          deleteSessionByName(sessionPendingManageDelete);
+          setIndicator(`Session supprimée : ${sessionPendingManageDelete}`);
+          sessionPendingManageDelete = null;
+          confirmDeleteModal.classList.remove('open');
+          openManageSessionModal();
+        } else if (sessionPendingDelete) {
+          deleteSessionByName(sessionPendingDelete);
+          setIndicator(`Session supprimée : ${sessionPendingDelete}`);
+          sessionPendingDelete = null;
+          confirmDeleteModal.classList.remove('open');
+          closeSessionModal();
+        }
       });
 
       cancelNewSessionBtn.addEventListener('click', closeNewSessionModal);
@@ -1559,7 +1797,7 @@
       });
 
       loadSessionBtn.addEventListener('click', () => openSessionModal('load'));
-      deleteSessionBtn.addEventListener('click', () => openSessionModal('delete'));
+      manageSessionBtn.addEventListener('click', () => openManageSessionModal());
 
       backHomeBtn.addEventListener('click', () => {
         if (!appScreen.classList.contains('hidden') && currentSessionName) {
@@ -1584,6 +1822,462 @@
         el.addEventListener('change', () => {
           if (!appScreen.classList.contains('hidden') && currentSessionName) saveCurrentSession();
         });
+      });
+
+      // ========== MANAGE SESSIONS & IMPORT/EXPORT ==========
+      function openManageSessionModal() {
+        const store = getStore();
+        const names = Object.keys(store).sort((a, b) => a.localeCompare(b, 'fr'));
+        managedSessionList.innerHTML = '';
+
+        if (!names.length) {
+          const empty = document.createElement('div');
+          empty.className = 'session-item';
+          empty.innerHTML = '<div class="session-item-name">Aucune session sauvegardée.</div>';
+          managedSessionList.appendChild(empty);
+        } else {
+          names.forEach(name => {
+            const row = document.createElement('div');
+            row.className = 'session-item';
+
+            const label = document.createElement('div');
+            label.className = 'session-item-name';
+            label.textContent = name;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ghost-btn';
+            btn.textContent = 'Supprimer';
+
+            btn.addEventListener('click', () => {
+              sessionPendingManageDelete = name;
+              confirmDeleteText.textContent = `Êtes-vous sûr de vouloir supprimer la session "${name}" ?`;
+              confirmDeleteModal.classList.add('open');
+            });
+
+            row.appendChild(label);
+            row.appendChild(btn);
+            managedSessionList.appendChild(row);
+          });
+        }
+
+        manageSessionModal.classList.add('open');
+      }
+
+      function closeManageSessionModal() {
+        manageSessionModal.classList.remove('open');
+      }
+
+      function exportAllSessions() {
+        const store = getStore();
+        if (Object.keys(store).length === 0) {
+          setIndicator('Aucune session à exporter');
+          return;
+        }
+
+        const now = new Date();
+        const timestamp = now.getFullYear() +
+          String(now.getMonth() + 1).padStart(2, '0') +
+          String(now.getDate()).padStart(2, '0');
+
+        const exportData = {
+          version: 2,
+          exportDate: new Date().toISOString(),
+          sessions: store
+        };
+
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+         
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(blob, `compagnon-sauvegardes-${timestamp}.json`);
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `compagnon-sauvegardes-${timestamp}.json`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+           
+          link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+           
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }
+
+        setIndicator('Sauvegardes exportées');
+      }
+
+      function importSessions(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const importData = JSON.parse(e.target.result);
+            const importedSessions = importData.sessions || {};
+            const store = getStore();
+            let imported = 0;
+            let renamed = 0;
+
+            const now = new Date();
+            const suffix = '_import' +
+              now.getFullYear() +
+              String(now.getMonth() + 1).padStart(2, '0') +
+              String(now.getDate()).padStart(2, '0');
+
+            Object.entries(importedSessions).forEach(([name, data]) => {
+              let finalName = name;
+              if (store[finalName]) {
+                finalName = `${name}${suffix}`;
+                renamed++;
+              }
+              store[finalName] = data;
+              imported++;
+            });
+
+            setStore(store);
+            setIndicator(`${imported} session(s) importée(s)${renamed > 0 ? `, ${renamed} renommée(s)` : ''}`);
+            openManageSessionModal();
+          } catch (err) {
+            setIndicator('Erreur lors de l\'importation');
+            console.error('Import error:', err);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      closeManageSessionModalBtn.addEventListener('click', closeManageSessionModal);
+      manageSessionModal.addEventListener('click', (e) => {
+        if (e.target === manageSessionModal) closeManageSessionModal();
+      });
+
+      importSessionBtn.addEventListener('click', () => {
+        fileImportInput.click();
+      });
+
+      fileImportInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          importSessions(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
+
+      exportAllBtn.addEventListener('click', exportAllSessions);
+
+      // ========== SKETCH DRAWING ==========
+      function getSketches() {
+        const store = getStore();
+        const data = store[currentSessionName];
+        return (data && data.sketches) || {};
+      }
+
+      function setSketches(sketches) {
+        const store = getStore();
+        if (store[currentSessionName]) {
+          store[currentSessionName].sketches = sketches;
+          setStore(store);
+        }
+      }
+
+      function renderSketchList() {
+        const sketches = getSketches();
+        sketchList.innerHTML = '';
+
+        const names = Object.keys(sketches).sort();
+        if (names.length === 0) {
+          const empty = document.createElement('div');
+          empty.style.cssText = 'padding: 20px; text-align: center; color: var(--muted); font-size: 0.9rem;';
+          empty.textContent = 'Aucun croquis. Créez-en un pour commencer.';
+          sketchList.appendChild(empty);
+        } else {
+          names.forEach(sketchId => {
+            const sketch = sketches[sketchId];
+            const item = document.createElement('div');
+            item.className = 'sketch-item';
+
+            const name = document.createElement('div');
+            name.className = 'sketch-item-name';
+            name.textContent = sketch.name || sketchId;
+
+            const actions = document.createElement('div');
+            actions.className = 'sketch-item-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'icon-btn';
+            editBtn.textContent = '✏️';
+            editBtn.setAttribute('aria-label', 'Éditer');
+            editBtn.addEventListener('click', () => openSketchEditor(sketchId));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'icon-btn';
+            deleteBtn.textContent = '−';
+            deleteBtn.setAttribute('aria-label', 'Supprimer');
+            deleteBtn.addEventListener('click', () => {
+              const newSketches = getSketches();
+              delete newSketches[sketchId];
+              setSketches(newSketches);
+              renderSketchList();
+            });
+
+            actions.appendChild(editBtn);
+            actions.appendChild(deleteBtn);
+            item.appendChild(name);
+            item.appendChild(actions);
+            sketchList.appendChild(item);
+          });
+        }
+      }
+
+      function openSketchEditor(sketchId) {
+        currentSketchId = sketchId;
+        const sketches = getSketches();
+        const sketch = sketches[sketchId];
+
+        sketchEditorTitle.value = sketch.name || '';
+        sketchEditor.classList.remove('hidden');
+        sketchHistory = [];
+
+        // Load saved color settings
+        sketchColor.value = sketch.penColor || '#000000';
+        sketchBgColor.value = sketch.bgColor || '#ffffff';
+
+        setTimeout(() => {
+          initializeCanvas();
+          // Clear canvas before loading
+          canvasContext.fillStyle = sketchBgColor.value;
+          canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+          saveCanvasHistory();
+           
+          drawOnCanvas();
+           
+          if (sketch.imageData) {
+            const img = new Image();
+            img.onload = () => {
+              const ctx = sketchCanvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+              saveCanvasHistory();
+            };
+            img.src = sketch.imageData;
+          }
+          sketchCanvas.focus();
+        }, 10);
+      }
+
+      function closeSketchEditor() {
+        currentSketchId = null;
+        sketchEditor.classList.add('hidden');
+        sketchHistory = [];
+      }
+
+      function initializeCanvas() {
+        if (!canvasContext) {
+          sketchCanvas.width = sketchCanvas.offsetWidth;
+          sketchCanvas.height = sketchCanvas.offsetHeight;
+          canvasContext = sketchCanvas.getContext('2d');
+          canvasContext.lineCap = 'round';
+          canvasContext.lineJoin = 'round';
+        }
+      }
+
+      function saveCanvasHistory() {
+        sketchHistory.push(sketchCanvas.toDataURL());
+      }
+
+      function drawOnCanvas() {
+        let isDrawing = false;
+
+        const startDrawing = (e) => {
+          isDrawing = true;
+          saveCanvasHistory();
+          const pos = getCanvasPosition(e);
+          canvasContext.beginPath();
+          canvasContext.moveTo(pos.x, pos.y);
+        };
+
+        const draw = (e) => {
+          if (!isDrawing) return;
+          const pos = getCanvasPosition(e);
+          canvasContext.strokeStyle = sketchColor.value;
+          canvasContext.lineWidth = parseInt(sketchSize.value);
+          canvasContext.lineTo(pos.x, pos.y);
+          canvasContext.stroke();
+        };
+
+        const stopDrawing = () => {
+          if (isDrawing) {
+            canvasContext.closePath();
+            isDrawing = false;
+          }
+        };
+
+        sketchCanvas.removeEventListener('mousedown', startDrawing);
+        sketchCanvas.removeEventListener('mousemove', draw);
+        sketchCanvas.removeEventListener('mouseup', stopDrawing);
+        sketchCanvas.removeEventListener('mouseout', stopDrawing);
+
+        sketchCanvas.addEventListener('mousedown', startDrawing);
+        sketchCanvas.addEventListener('mousemove', draw);
+        sketchCanvas.addEventListener('mouseup', stopDrawing);
+        sketchCanvas.addEventListener('mouseout', stopDrawing);
+
+        sketchCanvas.removeEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startDrawing(e.touches[0]);
+        });
+        sketchCanvas.removeEventListener('touchmove', (e) => {
+          e.preventDefault();
+          draw(e.touches[0]);
+        });
+        sketchCanvas.removeEventListener('touchend', (e) => {
+          e.preventDefault();
+          stopDrawing();
+        });
+
+        sketchCanvas.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startDrawing(e.touches[0]);
+        }, { passive: false });
+        sketchCanvas.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          draw(e.touches[0]);
+        }, { passive: false });
+        sketchCanvas.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          stopDrawing();
+        }, { passive: false });
+      }
+
+      function getCanvasPosition(e) {
+        const rect = sketchCanvas.getBoundingClientRect();
+        const x = (e.clientX || e.pageX) - rect.left;
+        const y = (e.clientY || e.pageY) - rect.top;
+        return { x, y };
+      }
+
+      function undoSketch() {
+        if (sketchHistory.length > 1) {
+          sketchHistory.pop();
+          const img = new Image();
+          img.onload = () => {
+            canvasContext.clearRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+            canvasContext.drawImage(img, 0, 0);
+          };
+          img.src = sketchHistory[sketchHistory.length - 1];
+        }
+      }
+
+      function clearSketch() {
+        canvasContext.fillStyle = sketchBgColor.value;
+        canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+        sketchHistory = [];
+        saveCanvasHistory();
+      }
+
+      function saveSketch() {
+        if (!currentSketchId) return;
+
+        const name = sketchEditorTitle.value.trim() || 'Sans titre';
+        const sketches = getSketches();
+        sketches[currentSketchId] = {
+          name: name,
+          imageData: sketchCanvas.toDataURL('image/png'),
+          createdAt: sketches[currentSketchId]?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          penColor: sketchColor.value,
+          bgColor: sketchBgColor.value
+        };
+
+        setSketches(sketches);
+        saveCurrentSession();
+        setIndicator('Croquis sauvegardé');
+        closeSketchEditor();
+        renderSketchList();
+      }
+
+      function exportAllSketches() {
+        const sketches = getSketches();
+        if (Object.keys(sketches).length === 0) {
+          setIndicator('Aucun croquis à exporter');
+          return;
+        }
+
+        const now = new Date();
+        const timestamp = now.getFullYear() +
+          String(now.getMonth() + 1).padStart(2, '0') +
+          String(now.getDate()).padStart(2, '0');
+
+        const exportData = {
+          sessionName: currentSessionName,
+          exportDate: new Date().toISOString(),
+          sketches: sketches
+        };
+
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+         
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(blob, `croquis-${timestamp}.json`);
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `croquis-${timestamp}.json`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+           
+          link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+           
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }
+
+        setIndicator('Croquis exportés');
+      }
+
+      // Sketch event listeners
+      newSketchBtn.addEventListener('click', () => {
+        const name = sketchNameInput.value.trim() || `Croquis ${Date.now()}`;
+        const sketches = getSketches();
+        const sketchId = `sketch_${Date.now()}`;
+        sketches[sketchId] = {
+          name: name,
+          imageData: '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          penColor: '#000000',
+          bgColor: '#ffffff'
+        };
+        setSketches(sketches);
+        sketchNameInput.value = '';
+        openSketchEditor(sketchId);
+      });
+
+      closeSketchEditorBtn.addEventListener('click', closeSketchEditor);
+      saveSketchBtn.addEventListener('click', saveSketch);
+      clearSketchBtn.addEventListener('click', clearSketch);
+      undoSketchBtn.addEventListener('click', undoSketch);
+      exportSketchesBtn.addEventListener('click', exportAllSketches);
+
+      sketchEditorTitle.addEventListener('change', () => {
+        const name = sketchEditorTitle.value.trim() || 'Sans titre';
+        const sketches = getSketches();
+        if (sketches[currentSketchId]) {
+          sketches[currentSketchId].name = name;
+          setSketches(sketches);
+        }
+      });
+
+      sketchBgColor.addEventListener('change', () => {
+        if (canvasContext) {
+          canvasContext.fillStyle = sketchBgColor.value;
+          canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+          saveCanvasHistory();
+        }
       });
 
       showHome();
