@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Compagnon d’Aventure — Prototype Android</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #111513;
+      --shell-top: #232a26;
+      --shell-bottom: #161b18;
+      --line: rgba(213, 194, 140, 0.22);
+      --text: #f4efe2;
+      --muted: #c8bea6;
+      --gold: #d5c28c;
+      --accent: #f1e9c8;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      --radius-screen: 30px;
+      --shell-pad: 14px;
+      --page-pad-x: 18px;
+      --page-pad-y: 18px;
+      --section-pad: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(180deg, #0d100f 0%, #121715 100%);
+      color: var(--text);
+    }
+
+    body { overscroll-behavior: none; }
+
+    .phone-shell {
+      width: 100vw;
+      height: 100vh;
+      padding: var(--shell-pad);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, var(--shell-top) 0%, var(--shell-bottom) 100%);
+      box-shadow:
+        0 30px 90px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        inset 0 -1px 0 rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .screen {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      width: 100%;
+      border-radius: var(--radius-screen);
+      background:
+        radial-gradient(circle at top left, rgba(213,194,140,0.1), transparent 35%),
+        linear-gradient(180deg, rgba(21,26,24,0.98), rgba(15,19,17,0.99));
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hidden { display: none !important; }
+
+    .home-screen {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(213,194,140,0.08), transparent 28%),
+        linear-gradient(180deg, rgba(21,26,24,0.98), rgba(15,19,17,0.99));
+    }
+
+    .home-panel {
+      width: min(100%, 420px);
+      padding: 28px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        linear-gradient(180deg, rgba(39,46,43,0.82), rgba(24,30,27,0.9));
+      border: 1px solid rgba(213,194,140,0.18);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.95;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+
+    .home-subtitle,
+    .subtitle,
+    .section-note,
+    .modal-text,
+    .save-indicator {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .home-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .topbar {
+      padding: 20px var(--page-pad-x) 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: linear-gradient(180deg, rgba(17,21,19,0.88), rgba(17,21,19,0.4));
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      max-width: 32ch;
+    }
+
+    .session-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 180px;
+      max-width: 250px;
+      flex: 0 1 250px;
+    }
+
+    label.small {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      min-width: 0;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 13px;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 4px rgba(213,194,140,0.08);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 92px;
+      font-family: "Inter", sans-serif;
+      white-space: pre-wrap;
+    }
+
+    .utility-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 0;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .tabs {
+       display: grid;
+       grid-template-columns: repeat(4, minmax(0, 1fr));
+       gap: 10px;
+       padding: 12px 14px 10px;
+       background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+       flex-shrink: 0;
+     }
+
+    .tab,
+    .icon-btn,
+    .ghost-btn,
+    .primary-btn,
+    .round-add,
+    .home-btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      font: inherit;
+    }
+
+    .tab {
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 11px 10px;
+      font: 600 0.92rem/1 "Inter", sans-serif;
+    }
+
+    .tab:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .tab.active {
+      color: #1a1b18;
+      background: linear-gradient(180deg, #f4f1da, #e9e2b5);
+      box-shadow: 0 12px 24px rgba(213,194,140,0.16);
+    }
+
+    .swipe-hint {
+      padding: 0 var(--page-pad-x) 10px;
+      color: rgba(244,239,226,0.72);
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .swipe-hint::before {
+      content: "↔";
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    .pages-wrap {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+
+    .pages-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.38s ease;
+      will-change: transform;
+    }
+
+    .page {
+      flex: 0 0 100%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: var(--page-pad-y) var(--page-pad-x) 26px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      touch-action: pan-y;
+    }
+
+    .page::-webkit-scrollbar,
+    #weaponsList::-webkit-scrollbar,
+    #inventoryList::-webkit-scrollbar,
+    .session-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hero-panel,
+    .dice-shell {
+      border: 1px solid rgba(213,194,140,0.22);
+      border-radius: 28px;
+      padding: var(--section-pad);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        linear-gradient(180deg, rgba(39,46,43,0.68), rgba(29,35,32,0.72));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .section {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.05rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .section-note {
+      margin: 0;
+      font-size: 0.88rem;
+      max-width: 58ch;
+    }
+
+    .hero-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .hero-side-note {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.35;
+      text-align: right;
+      max-width: 24ch;
+      opacity: 0.95;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px 14px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .number-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 4px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .icon-btn:hover {
+      background: rgba(255,255,255,0.13);
+      transform: scale(1.06);
+    }
+
+    .icon-btn:active,
+    .ghost-btn:active,
+    .primary-btn:active,
+    .round-add:active,
+    .home-btn:active {
+      transform: scale(0.97);
+    }
+
+    .save-boxes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .check-tile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      min-width: 0;
+    }
+
+    .check-tile input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .check-tile span {
+      font-size: 0.88rem;
+      color: var(--text);
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .weapon-input-row,
+    .inventory-input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+    }
+
+    .round-add {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      color: #161714;
+      font-weight: 800;
+      font-size: 1.25rem;
+      background: linear-gradient(180deg, #f4f1da, #e8dfaf);
+      box-shadow: 0 16px 30px rgba(213,194,140,0.18);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .round-add:hover { transform: translateY(-1px) scale(1.02); }
+
+    #weaponsList,
+    #inventoryList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #weaponsList {
+      max-height: 190px;
+    }
+
+    #inventoryList {
+      max-height: 360px;
+    }
+
+    .weapon-item,
+    .inventory-item,
+    .session-item {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .weapon-text,
+    .inventory-text,
+    .session-item-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .inventory-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .bullet {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--accent), var(--gold));
+      box-shadow: 0 0 0 4px rgba(213,194,140,0.08);
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+
+    .ghost-btn {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+
+    .ghost-btn:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn,
+    .home-btn {
+      padding: 12px 16px;
+      border-radius: 999px;
+      color: #161714;
+      font-weight: 700;
+      background: linear-gradient(180deg, var(--accent), var(--gold));
+      box-shadow: 0 16px 30px rgba(213,194,140,0.18);
+      white-space: nowrap;
+    }
+
+    .primary-btn:hover,
+    .home-btn:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 18px 36px rgba(213,194,140,0.22);
+    }
+
+    .home-btn.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: none;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .dice-stage {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 340px;
+      margin: 14px auto 0;
+    }
+
+    .die {
+      aspect-ratio: 1;
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, #202622, #171c19);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      width: 100%;
+      max-width: 145px;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+
+    .die.rolling { animation: dice-rotate 1.05s ease forwards; }
+
+    .pip-grid {
+      width: 74%;
+      height: 74%;
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      grid-template-rows: repeat(3,1fr);
+      place-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pip {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--accent), var(--gold));
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.35), 0 2px 6px rgba(0,0,0,0.28);
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .pip.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .dice-result {
+      text-align: center;
+      display: grid;
+      gap: 4px;
+      margin-top: 16px;
+    }
+
+    .dice-total {
+      font-family: "Cinzel", serif;
+      font-size: clamp(2.1rem, 7vw, 3rem);
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .dice-caption {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(6,10,8,0.72);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: min(100%, 460px);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, rgba(28,34,31,0.98), rgba(18,23,21,0.99));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.2rem;
+    }
+
+    .session-list {
+      display: grid;
+      gap: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stagger {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .stagger:nth-child(1) { animation-delay: 0.04s; }
+    .stagger:nth-child(2) { animation-delay: 0.10s; }
+    .stagger:nth-child(3) { animation-delay: 0.16s; }
+
+    /* Sketch Styles */
+    .sketch-input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #sketchList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      margin-bottom: 16px;
+    }
+
+    .sketch-item {
+      width: 100%;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .sketch-item-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .sketch-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sketch-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      width: 100%;
+    }
+
+    .sketch-editor.hidden { display: none; }
+
+    .sketch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sketch-title {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: 600 0.95rem/1 "Inter", sans-serif;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .sketch-title:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .sketch-canvas {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(213,194,140,0.18);
+      cursor: crosshair;
+      touch-action: none;
+      display: block;
+    }
+
+    .sketch-tools {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      width: 100%;
+    }
+
+    .sketch-color-picker,
+    .sketch-size-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .sketch-color-picker label,
+    .sketch-size-picker label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .sketch-color-picker input[type="color"] {
+      width: 40px;
+      height: 34px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .sketch-size-picker input[type="range"] {
+      flex: 1;
+      min-width: 80px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes dice-rotate {
+      0% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(10deg) scale(1.03); }
+      50% { transform: rotate(-12deg) scale(0.98); }
+      75% { transform: rotate(8deg) scale(1.02); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    @media (max-width: 760px) {
+      .hero-head { grid-template-columns: 1fr; }
+      .hero-side-note { text-align: left; max-width: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .save-boxes { grid-template-columns: 1fr; }
+      .session-box { width: 100%; max-width: none; }
+    }
+
+    @media (max-width: 420px) {
+      :root {
+        --shell-pad: 10px;
+        --radius-screen: 24px;
+        --page-pad-x: 14px;
+        --page-pad-y: 14px;
+      }
+
+      .tabs { gap: 6px; padding: 10px 10px 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .tab { padding: 10px 8px; font-size: 0.8rem; }
+      .icon-btn { width: 32px; height: 32px; }
+      .ghost-btn { padding: 10px 12px; }
+      .round-add { width: 42px; height: 42px; }
+      .pip { width: 11px; height: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone-shell">
+    <section class="screen">
+      <section id="homeScreen" class="home-screen">
+        <div class="home-panel stagger">
+          <p class="eyebrow">Prototype Android</p>
+          <h1>Compagnon d’Aventure</h1>
+          <p class="home-subtitle">Suivi de personnage, inventaire libre et jets de 2 dés à 6 faces.</p>
+
+          <div class="home-actions">
+            <button id="continueBtn" class="home-btn" type="button">Continuer</button>
+            <button id="newSessionBtn" class="home-btn" type="button">Nouvelle partie</button>
+            <button id="loadSessionBtn" class="home-btn secondary" type="button">Charger partie</button>
+            <button id="manageSessionBtn" class="home-btn secondary" type="button">Gestion des sauvegardes</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="appScreen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+        <header class="topbar">
+          <div class="brand">
+            <p class="eyebrow">Prototype Android</p>
+            <h1>Compagnon d’Aventure</h1>
+          </div>
+
+          <div class="session-box">
+            <label class="small" for="sessionName">Session</label>
+            <input id="sessionName" type="text" placeholder="Session principale" />
+          </div>
+        </header>
+
+        <div class="utility-bar">
+          <button id="backHomeBtn" class="ghost-btn" type="button">← Retour à l’accueil</button>
+          <div id="saveIndicator" class="save-indicator">Aucune session active</div>
+        </div>
+
+        <nav class="tabs" aria-label="Navigation">
+          <button class="tab active" data-tab="0" type="button">Personnage</button>
+          <button class="tab" data-tab="1" type="button">Inventaire</button>
+          <button class="tab" data-tab="2" type="button">Dés</button>
+          <button class="tab" data-tab="3" type="button">Croquis</button>
+        </nav>
+
+        <div class="pages-wrap">
+          <div id="pagesTrack" class="pages-track">
+            <section class="page page1" aria-label="Page personnage">
+              <div class="hero-panel stagger">
+                <div class="hero-head">
+                  <div>
+                    <h2 class="section-title">Fiche de personnage</h2>
+                  </div>
+                  <div class="hero-side-note">Chaque champ est configurable et peut être ajusté rapidement.</div>
+                </div>
+
+                <div class="stats-grid">
+                  <div class="field">
+                    <label class="small" for="hpMax">Points de vie maximum</label>
+                    <div class="number-row">
+                      <input id="hpMax" type="number" value="20" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="hpMax" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="hpMax" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="hpNow">Points de vie actuels</label>
+                    <div class="number-row">
+                      <input id="hpNow" type="number" value="20" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="hpNow" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="hpNow" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="dex">Dextérité</label>
+                    <div class="number-row">
+                      <input id="dex" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="dex" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="dex" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="luck">Chance</label>
+                    <div class="number-row">
+                      <input id="luck" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="luck" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="luck" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="talent">Talent</label>
+                    <div class="number-row">
+                      <input id="talent" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="talent" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="talent" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small">Sauvegarde</label>
+                    <div class="save-boxes">
+                      <label class="check-tile">
+                        <input id="save1" type="checkbox" />
+                        <span>Case 1</span>
+                      </label>
+                      <label class="check-tile">
+                        <input id="save2" type="checkbox" />
+                        <span>Case 2</span>
+                      </label>
+                      <label class="check-tile">
+                        <input id="save3" type="checkbox" />
+                        <span>Case 3</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label class="small" for="weaponInput">Armes et spécificités</label>
+                    <div class="weapon-input-row">
+                      <input id="weaponInput" type="text" placeholder="Ajouter une arme ou spécificité..." />
+                      <button id="addWeaponBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <div id="weaponsList" aria-live="polite"></div>
+                  </div>
+
+                  <div class="field full">
+                    <label class="small" for="notes">Notes</label>
+                    <textarea id="notes" placeholder="Quêtes, indices, sorts, PNJ, idées..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="page page2" aria-label="Page inventaire">
+              <div class="hero-panel stagger">
+                <div class="section">
+                  <h2 class="section-title">Inventaire</h2>
+                  <p class="section-note">Ajoutez librement les objets du sac, composants, clefs ou consommables.</p>
+
+                  <div class="inventory-input-row">
+                    <input id="inventoryInput" type="text" placeholder="Ajouter un objet..." />
+                    <button id="addInventoryBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                  </div>
+
+                  <div id="inventoryList" aria-live="polite"></div>
+
+                  <div class="inline-actions">
+                    <button id="clearInventoryBtn" class="ghost-btn" type="button">Vider l’inventaire</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="page page3" aria-label="Page dés">
+              <div class="dice-shell stagger">
+                <div class="section">
+                  <h2 class="section-title">Jets de dés</h2>
+                  <div class="dice-stage">
+                    <div class="die" id="die1" aria-label="Dé numéro 1">
+                      <div class="pip-grid"></div>
+                    </div>
+                    <div class="die" id="die2" aria-label="Dé numéro 2">
+                      <div class="pip-grid"></div>
+                    </div>
+                  </div>
+
+                  <div class="dice-result">
+                    <div id="diceTotal" class="dice-total">—</div>
+                    <div id="diceCaption" class="dice-caption">Touchez le bouton pour lancer</div>
+                  </div>
+
+                  <div class="inline-actions" style="justify-content:center;">
+                    <button id="rollDiceBtn" class="primary-btn" type="button">Lancer les dés</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="page page4" aria-label="Page croquis">
+              <div class="hero-panel stagger">
+                <div class="section">
+                  <h2 class="section-title">Croquis</h2>
+                  <p class="section-note">Créez et sauvegardez vos croquis, plans et illustrations.</p>
+
+                  <div class="sketch-input-row">
+                    <input id="sketchNameInput" type="text" placeholder="Nom du nouveau croquis..." />
+                    <button id="newSketchBtn" class="round-add" type="button" aria-label="Nouveau croquis">+</button>
+                  </div>
+
+                  <div id="sketchList" aria-live="polite"></div>
+
+                  <div id="sketchEditor" class="sketch-editor hidden">
+                    <div class="sketch-header">
+                      <input id="sketchEditorTitle" type="text" class="sketch-title" placeholder="Nom du croquis" />
+                      <button id="closeSketchEditorBtn" class="icon-btn" type="button" aria-label="Fermer">✕</button>
+                    </div>
+                    <canvas id="sketchCanvas" class="sketch-canvas"></canvas>
+                    <div class="sketch-tools">
+                      <button id="clearSketchBtn" class="ghost-btn" type="button">Effacer tout</button>
+                      <button id="undoSketchBtn" class="ghost-btn" type="button">Annuler</button>
+                      <div class="sketch-color-picker">
+                        <label for="sketchColor">Couleur :</label>
+                        <input id="sketchColor" type="color" value="#000000" />
+                      </div>
+                      <div class="sketch-color-picker">
+                        <label for="sketchBgColor">Fond :</label>
+                        <input id="sketchBgColor" type="color" value="#ffffff" />
+                      </div>
+                      <div class="sketch-size-picker">
+                        <label for="sketchSize">Taille :</label>
+                        <input id="sketchSize" type="range" min="1" max="20" value="3" />
+                      </div>
+                      <button id="saveSketchBtn" class="primary-btn" type="button">Sauvegarder le croquis</button>
+                    </div>
+                  </div>
+
+                  <div class="inline-actions">
+                    <button id="exportSketchesBtn" class="ghost-btn" type="button">Exporter les croquis</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <div id="sessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 id="sessionModalTitle" class="modal-title">Sessions</h2>
+          <p id="sessionModalText" class="modal-text">Choisissez une session.</p>
+          <div id="sessionList" class="session-list"></div>
+          <div class="modal-actions">
+            <button id="closeSessionModalBtn" class="ghost-btn" type="button">Fermer</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="manageSessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Gestion des sauvegardes</h2>
+          <p class="modal-text">Gérez vos sauvegardes et importez/exportez des fichiers.</p>
+          <div id="managedSessionList" class="session-list"></div>
+          <div class="modal-actions">
+            <button id="importSessionBtn" class="ghost-btn" type="button">Importer</button>
+            <button id="exportAllBtn" class="ghost-btn" type="button">Exporter</button>
+            <button id="closeManageSessionModalBtn" class="ghost-btn" type="button">Fermer</button>
+          </div>
+          <input id="fileImportInput" type="file" accept=".json" style="display:none;" />
+        </div>
+      </div>
+
+      <div id="confirmDeleteModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Confirmer la suppression</h2>
+          <p id="confirmDeleteText" class="modal-text"></p>
+          <div class="modal-actions">
+            <button id="cancelDeleteBtn" class="ghost-btn" type="button">Non</button>
+            <button id="confirmDeleteBtn" class="primary-btn" type="button">Oui</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="newSessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Nouvelle partie</h2>
+          <p class="modal-text">Quel nom pour la session ?</p>
+          <div class="field" style="margin-top:4px;">
+            <label class="small" for="newSessionNameInput">Nom de session</label>
+            <input id="newSessionNameInput" type="text" placeholder="Ex. Campagne Nord, Session 1..." />
+          </div>
+          <div class="modal-actions">
+            <button id="cancelNewSessionBtn" class="ghost-btn" type="button">Annuler</button>
+            <button id="confirmNewSessionBtn" class="primary-btn" type="button">Créer</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'compagnon_sessions_store_v2';
+      const LAST_SESSION_KEY = 'compagnon_last_session_v2';
+
+      const homeScreen = document.getElementById('homeScreen');
+      const appScreen = document.getElementById('appScreen');
+
+      const continueBtn = document.getElementById('continueBtn');
+      const newSessionBtn = document.getElementById('newSessionBtn');
+      const loadSessionBtn = document.getElementById('loadSessionBtn');
+      const manageSessionBtn = document.getElementById('manageSessionBtn');
+      const backHomeBtn = document.getElementById('backHomeBtn');
+      const saveIndicator = document.getElementById('saveIndicator');
+
+      const sessionNameInput = document.getElementById('sessionName');
+
+      const tabs = [...document.querySelectorAll('.tab')];
+      const pagesTrack = document.getElementById('pagesTrack');
+
+      const weaponInput = document.getElementById('weaponInput');
+      const addWeaponBtn = document.getElementById('addWeaponBtn');
+      const weaponsList = document.getElementById('weaponsList');
+
+      const inventoryInput = document.getElementById('inventoryInput');
+      const addInventoryBtn = document.getElementById('addInventoryBtn');
+      const inventoryList = document.getElementById('inventoryList');
+      const clearInventoryBtn = document.getElementById('clearInventoryBtn');
+
+      const die1 = document.getElementById('die1');
+      const die2 = document.getElementById('die2');
+      const diceTotal = document.getElementById('diceTotal');
+      const diceCaption = document.getElementById('diceCaption');
+      const rollDiceBtn = document.getElementById('rollDiceBtn');
+
+      const sessionModal = document.getElementById('sessionModal');
+      const sessionModalTitle = document.getElementById('sessionModalTitle');
+      const sessionModalText = document.getElementById('sessionModalText');
+      const sessionList = document.getElementById('sessionList');
+      const closeSessionModalBtn = document.getElementById('closeSessionModalBtn');
+
+      const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+      const confirmDeleteText = document.getElementById('confirmDeleteText');
+      const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+      const newSessionModal = document.getElementById('newSessionModal');
+      const newSessionNameInput = document.getElementById('newSessionNameInput');
+      const cancelNewSessionBtn = document.getElementById('cancelNewSessionBtn');
+      const confirmNewSessionBtn = document.getElementById('confirmNewSessionBtn');
+
+      // Manage sessions modal
+      const manageSessionModal = document.getElementById('manageSessionModal');
+      const managedSessionList = document.getElementById('managedSessionList');
+      const importSessionBtn = document.getElementById('importSessionBtn');
+      const exportAllBtn = document.getElementById('exportAllBtn');
+      const closeManageSessionModalBtn = document.getElementById('closeManageSessionModalBtn');
+      const fileImportInput = document.getElementById('fileImportInput');
+
+      // Sketch elements
+      const sketchNameInput = document.getElementById('sketchNameInput');
+      const newSketchBtn = document.getElementById('newSketchBtn');
+      const sketchList = document.getElementById('sketchList');
+      const sketchEditor = document.getElementById('sketchEditor');
+      const sketchEditorTitle = document.getElementById('sketchEditorTitle');
+      const closeSketchEditorBtn = document.getElementById('closeSketchEditorBtn');
+      const sketchCanvas = document.getElementById('sketchCanvas');
+      const clearSketchBtn = document.getElementById('clearSketchBtn');
+      const undoSketchBtn = document.getElementById('undoSketchBtn');
+      const sketchColor = document.getElementById('sketchColor');
+      const sketchBgColor = document.getElementById('sketchBgColor');
+      const sketchSize = document.getElementById('sketchSize');
+      const saveSketchBtn = document.getElementById('saveSketchBtn');
+      const exportSketchesBtn = document.getElementById('exportSketchesBtn');
+
+      let currentPage = 0;
+      let currentSessionName = null;
+      let saveMessageTimer = null;
+      let sessionPendingDelete = null;
+      let sessionPendingManageDelete = null;
+
+      // Sketch state
+      let currentSketchId = null;
+      let sketchHistory = [];
+      let canvasContext = null;
+
+      function showHome() {
+        homeScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+      }
+
+      function showApp() {
+        homeScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+      }
+
+      function setIndicator(text) {
+        saveIndicator.textContent = text;
+        clearTimeout(saveMessageTimer);
+        saveMessageTimer = setTimeout(() => {
+          saveIndicator.textContent = currentSessionName
+            ? `Session active : ${currentSessionName}`
+            : 'Aucune session active';
+        }, 1400);
+      }
+
+      function getStore() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        } catch {
+          return {};
+        }
+      }
+
+      function setStore(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function sessionExists(name) {
+        const store = getStore();
+        return !!store[name];
+      }
+
+      function collectState() {
+        const store = getStore();
+        const currentSketches = (store[currentSessionName] && store[currentSessionName].sketches) || {};
+         
+        return {
+          sessionName: sessionNameInput.value.trim() || currentSessionName || 'Nouvelle partie',
+          hpMax: document.getElementById('hpMax').value,
+          hpNow: document.getElementById('hpNow').value,
+          dex: document.getElementById('dex').value,
+          luck: document.getElementById('luck').value,
+          talent: document.getElementById('talent').value,
+          save1: document.getElementById('save1').checked,
+          save2: document.getElementById('save2').checked,
+          save3: document.getElementById('save3').checked,
+          notes: document.getElementById('notes').value,
+          weapons: [...weaponsList.querySelectorAll('.weapon-text')].map(el => el.textContent),
+          inventory: [...inventoryList.querySelectorAll('.inventory-text')].map(el => el.textContent),
+          sketches: currentSketches
+        };
+      }
+
+      function applyState(data) {
+        sessionNameInput.value = data.sessionName ?? 'Nouvelle partie';
+        document.getElementById('hpMax').value = data.hpMax ?? 20;
+        document.getElementById('hpNow').value = data.hpNow ?? 20;
+        document.getElementById('dex').value = data.dex ?? 0;
+        document.getElementById('luck').value = data.luck ?? 0;
+        document.getElementById('talent').value = data.talent ?? 0;
+        document.getElementById('save1').checked = !!data.save1;
+        document.getElementById('save2').checked = !!data.save2;
+        document.getElementById('save3').checked = !!data.save3;
+        document.getElementById('notes').value = data.notes ?? '';
+
+        weaponsList.innerHTML = '';
+        (data.weapons || []).forEach(text => weaponsList.appendChild(createWeaponItem(text)));
+
+        inventoryList.innerHTML = '';
+        (data.inventory || []).forEach(text => inventoryList.appendChild(createInventoryItem(text)));
+
+        renderSketchList();
+      }
+
+      function buildEmptyState(name) {
+        return {
+          sessionName: name,
+          hpMax: 20,
+          hpNow: 20,
+          dex: 0,
+          luck: 0,
+          talent: 0,
+          save1: false,
+          save2: false,
+          save3: false,
+          notes: '',
+          weapons: [],
+          inventory: [],
+          sketches: {}
+        };
+      }
+
+      function uniqueSessionName(base = 'Nouvelle partie') {
+        const store = getStore();
+        if (!store[base]) return base;
+        let i = 2;
+        while (store[`${base} ${i}`]) i++;
+        return `${base} ${i}`;
+      }
+
+      function saveCurrentSession() {
+        const store = getStore();
+        const name = sessionNameInput.value.trim() || currentSessionName || uniqueSessionName('Nouvelle partie');
+        currentSessionName = name;
+        sessionNameInput.value = name;
+        const state = collectState();
+        state.sessionName = name;
+        store[name] = state;
+        setStore(store);
+        localStorage.setItem(LAST_SESSION_KEY, name);
+        setIndicator('Session sauvegardée');
+      }
+
+      function loadSessionByName(name) {
+        const store = getStore();
+        const data = store[name];
+        if (!data) return false;
+        currentSessionName = name;
+        applyState(data);
+        localStorage.setItem(LAST_SESSION_KEY, name);
+        setIndicator(`Session chargée : ${name}`);
+        return true;
+      }
+
+      function deleteSessionByName(name) {
+        const store = getStore();
+        if (!store[name]) return;
+        delete store[name];
+        setStore(store);
+        if (localStorage.getItem(LAST_SESSION_KEY) === name) {
+          localStorage.removeItem(LAST_SESSION_KEY);
+        }
+        if (currentSessionName === name) currentSessionName = null;
+      }
+
+      function renameCurrentSession(newNameRaw) {
+        const newName = newNameRaw.trim();
+        if (!newName) {
+          sessionNameInput.value = currentSessionName || '';
+          return;
+        }
+
+        const oldName = currentSessionName;
+        const store = getStore();
+
+        if (oldName === newName) {
+          sessionNameInput.value = newName;
+          saveCurrentSession();
+          return;
+        }
+
+        if (store[newName]) {
+          sessionNameInput.value = oldName || '';
+          setIndicator('Ce nom de session existe déjà');
+          return;
+        }
+
+        const state = collectState();
+        state.sessionName = newName;
+
+        if (oldName && store[oldName]) {
+          delete store[oldName];
+        }
+
+        store[newName] = state;
+        setStore(store);
+        currentSessionName = newName;
+        sessionNameInput.value = newName;
+        localStorage.setItem(LAST_SESSION_KEY, newName);
+        setIndicator('Session renommée');
+      }
+
+      function createSessionWithName(rawName) {
+        let name = rawName.trim();
+        if (!name) name = uniqueSessionName('Nouvelle partie');
+
+        if (sessionExists(name)) {
+          newSessionNameInput.value = name;
+          setIndicator('Ce nom existe déjà');
+          return false;
+        }
+
+        currentSessionName = name;
+        applyState(buildEmptyState(name));
+        saveCurrentSession();
+        showApp();
+        setPage(0);
+        return true;
+      }
+
+      function setPage(index) {
+        currentPage = Math.max(0, Math.min(3, index));
+        pagesTrack.style.transform = `translateX(-${currentPage * 100}%)`;
+        tabs.forEach((tab, i) => tab.classList.toggle('active', i === currentPage));
+        if (currentPage === 3) {
+          renderSketchList();
+        }
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => setPage(Number(tab.dataset.tab)));
+      });
+
+      let startX = 0;
+      let startY = 0;
+
+      pagesTrack.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+      }, { passive: true });
+
+      pagesTrack.addEventListener('touchend', (e) => {
+        const t = e.changedTouches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx < 0) setPage(currentPage + 1);
+          else setPage(currentPage - 1);
+        }
+      }, { passive: true });
+
+      document.querySelectorAll('[data-step-target]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById(btn.dataset.stepTarget);
+          const step = parseInt(btn.dataset.step, 10) || 1;
+          const current = parseInt(input.value || 0, 10) || 0;
+          input.value = current + step;
+          saveCurrentSession();
+        });
+      });
+
+      function createWeaponItem(text) {
+        const item = document.createElement('div');
+        item.className = 'weapon-item';
+
+        const label = document.createElement('div');
+        label.className = 'weapon-text';
+        label.textContent = text;
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'icon-btn';
+        remove.textContent = '−';
+        remove.setAttribute('aria-label', 'Supprimer');
+        remove.addEventListener('click', () => {
+          item.remove();
+          saveCurrentSession();
+        });
+
+        item.appendChild(label);
+        item.appendChild(remove);
+        return item;
+      }
+
+      function createInventoryItem(text) {
+        const item = document.createElement('div');
+        item.className = 'inventory-item';
+
+        const main = document.createElement('div');
+        main.className = 'inventory-main';
+
+        const bullet = document.createElement('div');
+        bullet.className = 'bullet';
+
+        const label = document.createElement('div');
+        label.className = 'inventory-text';
+        label.textContent = text;
+
+        main.appendChild(bullet);
+        main.appendChild(label);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'icon-btn';
+        remove.textContent = '−';
+        remove.setAttribute('aria-label', 'Supprimer');
+        remove.addEventListener('click', () => {
+          item.remove();
+          saveCurrentSession();
+        });
+
+        item.appendChild(main);
+        item.appendChild(remove);
+        return item;
+      }
+
+      function addWeapon() {
+        const value = weaponInput.value.trim();
+        if (!value) return;
+        weaponsList.appendChild(createWeaponItem(value));
+        weaponInput.value = '';
+        saveCurrentSession();
+      }
+
+      function addInventory() {
+        const value = inventoryInput.value.trim();
+        if (!value) return;
+        inventoryList.appendChild(createInventoryItem(value));
+        inventoryInput.value = '';
+        saveCurrentSession();
+      }
+
+      addWeaponBtn.addEventListener('click', addWeapon);
+      addInventoryBtn.addEventListener('click', addInventory);
+
+      weaponInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addWeapon();
+        }
+      });
+
+      inventoryInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addInventory();
+        }
+      });
+
+      clearInventoryBtn.addEventListener('click', () => {
+        inventoryList.innerHTML = '';
+        saveCurrentSession();
+      });
+
+      const pipMap = {
+        1: [4],
+        2: [0, 8],
+        3: [0, 4, 8],
+        4: [0, 2, 6, 8],
+        5: [0, 2, 4, 6, 8],
+        6: [0, 2, 3, 5, 6, 8]
+      };
+
+      function buildDieGrid(dieEl) {
+        const grid = dieEl.querySelector('.pip-grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 9; i++) {
+          const pip = document.createElement('span');
+          pip.className = 'pip';
+          grid.appendChild(pip);
+        }
+      }
+
+      function renderDie(dieEl, value) {
+        const pips = dieEl.querySelectorAll('.pip');
+        pips.forEach((pip, i) => {
+          pip.classList.toggle('show', pipMap[value].includes(i));
+        });
+      }
+
+      function randomDie() {
+        return Math.floor(Math.random() * 6) + 1;
+      }
+
+      function rollDice() {
+        die1.classList.add('rolling');
+        die2.classList.add('rolling');
+        diceTotal.textContent = '…';
+        diceCaption.textContent = 'Les dés roulent...';
+
+        let count = 0;
+        const flicker = setInterval(() => {
+          renderDie(die1, randomDie());
+          renderDie(die2, randomDie());
+          count++;
+          if (count >= 8) clearInterval(flicker);
+        }, 80);
+
+        setTimeout(() => {
+          const a = randomDie();
+          const b = randomDie();
+          renderDie(die1, a);
+          renderDie(die2, b);
+          diceTotal.textContent = a + b;
+          diceCaption.textContent = `Résultat : ${a} + ${b}`;
+          die1.classList.remove('rolling');
+          die2.classList.remove('rolling');
+        }, 900);
+      }
+
+      buildDieGrid(die1);
+      buildDieGrid(die2);
+      renderDie(die1, 1);
+      renderDie(die2, 1);
+      rollDiceBtn.addEventListener('click', rollDice);
+
+      function openSessionModal(mode) {
+        const store = getStore();
+        const names = Object.keys(store).sort((a, b) => a.localeCompare(b, 'fr'));
+        sessionList.innerHTML = '';
+
+        sessionModalTitle.textContent = mode === 'load' ? 'Charger partie' : 'Supprimer partie';
+        sessionModalText.textContent = mode === 'load'
+          ? 'Sélectionnez une session à charger.'
+          : 'Sélectionnez une session à supprimer.';
+
+        if (!names.length) {
+          const empty = document.createElement('div');
+          empty.className = 'session-item';
+          empty.innerHTML = '<div class="session-item-name">Aucune session sauvegardée.</div>';
+          sessionList.appendChild(empty);
+        } else {
+          names.forEach(name => {
+            const row = document.createElement('div');
+            row.className = 'session-item';
+
+            const label = document.createElement('div');
+            label.className = 'session-item-name';
+            label.textContent = name;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = mode === 'load' ? 'primary-btn' : 'ghost-btn';
+            btn.textContent = mode === 'load' ? 'Charger' : 'Supprimer';
+
+            btn.addEventListener('click', () => {
+              if (mode === 'load') {
+                if (loadSessionByName(name)) {
+                  closeSessionModal();
+                  showApp();
+                  setPage(0);
+                }
+              } else {
+                sessionPendingDelete = name;
+                confirmDeleteText.textContent = `Vous êtes sur le point de supprimer votre session "${name}", êtes-vous sûr de supprimer ?`;
+                confirmDeleteModal.classList.add('open');
+              }
+            });
+
+            row.appendChild(label);
+            row.appendChild(btn);
+            sessionList.appendChild(row);
+          });
+        }
+
+        sessionModal.classList.add('open');
+      }
+
+      function closeSessionModal() {
+        sessionModal.classList.remove('open');
+      }
+
+      function openNewSessionModal() {
+        newSessionNameInput.value = '';
+        newSessionModal.classList.add('open');
+        setTimeout(() => newSessionNameInput.focus(), 40);
+      }
+
+      function closeNewSessionModal() {
+        newSessionModal.classList.remove('open');
+      }
+
+      closeSessionModalBtn.addEventListener('click', closeSessionModal);
+      sessionModal.addEventListener('click', (e) => {
+        if (e.target === sessionModal) closeSessionModal();
+      });
+
+      cancelDeleteBtn.addEventListener('click', () => {
+        sessionPendingDelete = null;
+        confirmDeleteModal.classList.remove('open');
+      });
+
+      confirmDeleteModal.addEventListener('click', (e) => {
+        if (e.target === confirmDeleteModal) {
+          sessionPendingDelete = null;
+          confirmDeleteModal.classList.remove('open');
+        }
+      });
+
+      confirmDeleteBtn.addEventListener('click', () => {
+        if (sessionPendingManageDelete) {
+          deleteSessionByName(sessionPendingManageDelete);
+          setIndicator(`Session supprimée : ${sessionPendingManageDelete}`);
+          sessionPendingManageDelete = null;
+          confirmDeleteModal.classList.remove('open');
+          openManageSessionModal();
+        } else if (sessionPendingDelete) {
+          deleteSessionByName(sessionPendingDelete);
+          setIndicator(`Session supprimée : ${sessionPendingDelete}`);
+          sessionPendingDelete = null;
+          confirmDeleteModal.classList.remove('open');
+          closeSessionModal();
+        }
+      });
+
+      cancelNewSessionBtn.addEventListener('click', closeNewSessionModal);
+      newSessionModal.addEventListener('click', (e) => {
+        if (e.target === newSessionModal) closeNewSessionModal();
+      });
+
+      confirmNewSessionBtn.addEventListener('click', () => {
+        if (createSessionWithName(newSessionNameInput.value)) {
+          closeNewSessionModal();
+        }
+      });
+
+      newSessionNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (createSessionWithName(newSessionNameInput.value)) {
+            closeNewSessionModal();
+          }
+        }
+      });
+
+      continueBtn.addEventListener('click', () => {
+        const last = localStorage.getItem(LAST_SESSION_KEY);
+        if (last && loadSessionByName(last)) {
+          showApp();
+          setPage(0);
+          return;
+        }
+        openNewSessionModal();
+      });
+
+      newSessionBtn.addEventListener('click', () => {
+        openNewSessionModal();
+      });
+
+      loadSessionBtn.addEventListener('click', () => openSessionModal('load'));
+      manageSessionBtn.addEventListener('click', () => openManageSessionModal());
+
+      backHomeBtn.addEventListener('click', () => {
+        if (!appScreen.classList.contains('hidden') && currentSessionName) {
+          saveCurrentSession();
+        }
+        showHome();
+      });
+
+      sessionNameInput.addEventListener('change', () => {
+        renameCurrentSession(sessionNameInput.value);
+      });
+
+      sessionNameInput.addEventListener('blur', () => {
+        renameCurrentSession(sessionNameInput.value);
+      });
+
+      document.querySelectorAll('input, textarea').forEach(el => {
+        if (el === sessionNameInput || el === newSessionNameInput) return;
+        el.addEventListener('input', () => {
+          if (!appScreen.classList.contains('hidden') && currentSessionName) saveCurrentSession();
+        });
+        el.addEventListener('change', () => {
+          if (!appScreen.classList.contains('hidden') && currentSessionName) saveCurrentSession();
+        });
+      });
+
+      // ========== MANAGE SESSIONS & IMPORT/EXPORT ==========
+      function openManageSessionModal() {
+        const store = getStore();
+        const names = Object.keys(store).sort((a, b) => a.localeCompare(b, 'fr'));
+        managedSessionList.innerHTML = '';
+
+        if (!names.length) {
+          const empty = document.createElement('div');
+          empty.className = 'session-item';
+          empty.innerHTML = '<div class="session-item-name">Aucune session sauvegardée.</div>';
+          managedSessionList.appendChild(empty);
+        } else {
+          names.forEach(name => {
+            const row = document.createElement('div');
+            row.className = 'session-item';
+
+            const label = document.createElement('div');
+            label.className = 'session-item-name';
+            label.textContent = name;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ghost-btn';
+            btn.textContent = 'Supprimer';
+
+            btn.addEventListener('click', () => {
+              sessionPendingManageDelete = name;
+              confirmDeleteText.textContent = `Êtes-vous sûr de vouloir supprimer la session "${name}" ?`;
+              confirmDeleteModal.classList.add('open');
+            });
+
+            row.appendChild(label);
+            row.appendChild(btn);
+            managedSessionList.appendChild(row);
+          });
+        }
+
+        manageSessionModal.classList.add('open');
+      }
+
+      function closeManageSessionModal() {
+        manageSessionModal.classList.remove('open');
+      }
+
+      function exportAllSessions() {
+        const store = getStore();
+        if (Object.keys(store).length === 0) {
+          setIndicator('Aucune session à exporter');
+          return;
+        }
+
+        const now = new Date();
+        const timestamp = now.getFullYear() +
+          String(now.getMonth() + 1).padStart(2, '0') +
+          String(now.getDate()).padStart(2, '0');
+
+        const exportData = {
+          version: 2,
+          exportDate: new Date().toISOString(),
+          sessions: store
+        };
+
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+         
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(blob, `compagnon-sauvegardes-${timestamp}.json`);
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `compagnon-sauvegardes-${timestamp}.json`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+           
+          link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+           
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }
+
+        setIndicator('Sauvegardes exportées');
+      }
+
+      function importSessions(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const importData = JSON.parse(e.target.result);
+            const importedSessions = importData.sessions || {};
+            const store = getStore();
+            let imported = 0;
+            let renamed = 0;
+
+            const now = new Date();
+            const suffix = '_import' +
+              now.getFullYear() +
+              String(now.getMonth() + 1).padStart(2, '0') +
+              String(now.getDate()).padStart(2, '0');
+
+            Object.entries(importedSessions).forEach(([name, data]) => {
+              let finalName = name;
+              if (store[finalName]) {
+                finalName = `${name}${suffix}`;
+                renamed++;
+              }
+              store[finalName] = data;
+              imported++;
+            });
+
+            setStore(store);
+            setIndicator(`${imported} session(s) importée(s)${renamed > 0 ? `, ${renamed} renommée(s)` : ''}`);
+            openManageSessionModal();
+          } catch (err) {
+            setIndicator('Erreur lors de l\'importation');
+            console.error('Import error:', err);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      closeManageSessionModalBtn.addEventListener('click', closeManageSessionModal);
+      manageSessionModal.addEventListener('click', (e) => {
+        if (e.target === manageSessionModal) closeManageSessionModal();
+      });
+
+      importSessionBtn.addEventListener('click', () => {
+        fileImportInput.click();
+      });
+
+      fileImportInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          importSessions(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
+
+      exportAllBtn.addEventListener('click', exportAllSessions);
+
+      // ========== SKETCH DRAWING ==========
+      function getSketches() {
+        const store = getStore();
+        const data = store[currentSessionName];
+        return (data && data.sketches) || {};
+      }
+
+      function setSketches(sketches) {
+        const store = getStore();
+        if (store[currentSessionName]) {
+          store[currentSessionName].sketches = sketches;
+          setStore(store);
+        }
+      }
+
+      function renderSketchList() {
+        const sketches = getSketches();
+        sketchList.innerHTML = '';
+
+        const names = Object.keys(sketches).sort();
+        if (names.length === 0) {
+          const empty = document.createElement('div');
+          empty.style.cssText = 'padding: 20px; text-align: center; color: var(--muted); font-size: 0.9rem;';
+          empty.textContent = 'Aucun croquis. Créez-en un pour commencer.';
+          sketchList.appendChild(empty);
+        } else {
+          names.forEach(sketchId => {
+            const sketch = sketches[sketchId];
+            const item = document.createElement('div');
+            item.className = 'sketch-item';
+
+            const name = document.createElement('div');
+            name.className = 'sketch-item-name';
+            name.textContent = sketch.name || sketchId;
+
+            const actions = document.createElement('div');
+            actions.className = 'sketch-item-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'icon-btn';
+            editBtn.textContent = '✏️';
+            editBtn.setAttribute('aria-label', 'Éditer');
+            editBtn.addEventListener('click', () => openSketchEditor(sketchId));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'icon-btn';
+            deleteBtn.textContent = '−';
+            deleteBtn.setAttribute('aria-label', 'Supprimer');
+            deleteBtn.addEventListener('click', () => {
+              const newSketches = getSketches();
+              delete newSketches[sketchId];
+              setSketches(newSketches);
+              renderSketchList();
+            });
+
+            actions.appendChild(editBtn);
+            actions.appendChild(deleteBtn);
+            item.appendChild(name);
+            item.appendChild(actions);
+            sketchList.appendChild(item);
+          });
+        }
+      }
+
+      function openSketchEditor(sketchId) {
+        currentSketchId = sketchId;
+        const sketches = getSketches();
+        const sketch = sketches[sketchId];
+
+        sketchEditorTitle.value = sketch.name || '';
+        sketchEditor.classList.remove('hidden');
+        sketchHistory = [];
+
+        // Load saved color settings
+        sketchColor.value = sketch.penColor || '#000000';
+        sketchBgColor.value = sketch.bgColor || '#ffffff';
+
+        setTimeout(() => {
+          initializeCanvas();
+          // Clear canvas before loading
+          canvasContext.fillStyle = sketchBgColor.value;
+          canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+          saveCanvasHistory();
+           
+          drawOnCanvas();
+           
+          if (sketch.imageData) {
+            const img = new Image();
+            img.onload = () => {
+              const ctx = sketchCanvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+              saveCanvasHistory();
+            };
+            img.src = sketch.imageData;
+          }
+          sketchCanvas.focus();
+        }, 10);
+      }
+
+      function closeSketchEditor() {
+        currentSketchId = null;
+        sketchEditor.classList.add('hidden');
+        sketchHistory = [];
+      }
+
+      function initializeCanvas() {
+        if (!canvasContext) {
+          sketchCanvas.width = sketchCanvas.offsetWidth;
+          sketchCanvas.height = sketchCanvas.offsetHeight;
+          canvasContext = sketchCanvas.getContext('2d');
+          canvasContext.lineCap = 'round';
+          canvasContext.lineJoin = 'round';
+        }
+      }
+
+      function saveCanvasHistory() {
+        sketchHistory.push(sketchCanvas.toDataURL());
+      }
+
+      function drawOnCanvas() {
+        let isDrawing = false;
+
+        const startDrawing = (e) => {
+          isDrawing = true;
+          saveCanvasHistory();
+          const pos = getCanvasPosition(e);
+          canvasContext.beginPath();
+          canvasContext.moveTo(pos.x, pos.y);
+        };
+
+        const draw = (e) => {
+          if (!isDrawing) return;
+          const pos = getCanvasPosition(e);
+          canvasContext.strokeStyle = sketchColor.value;
+          canvasContext.lineWidth = parseInt(sketchSize.value);
+          canvasContext.lineTo(pos.x, pos.y);
+          canvasContext.stroke();
+        };
+
+        const stopDrawing = () => {
+          if (isDrawing) {
+            canvasContext.closePath();
+            isDrawing = false;
+          }
+        };
+
+        sketchCanvas.removeEventListener('mousedown', startDrawing);
+        sketchCanvas.removeEventListener('mousemove', draw);
+        sketchCanvas.removeEventListener('mouseup', stopDrawing);
+        sketchCanvas.removeEventListener('mouseout', stopDrawing);
+
+        sketchCanvas.addEventListener('mousedown', startDrawing);
+        sketchCanvas.addEventListener('mousemove', draw);
+        sketchCanvas.addEventListener('mouseup', stopDrawing);
+        sketchCanvas.addEventListener('mouseout', stopDrawing);
+
+        sketchCanvas.removeEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startDrawing(e.touches[0]);
+        });
+        sketchCanvas.removeEventListener('touchmove', (e) => {
+          e.preventDefault();
+          draw(e.touches[0]);
+        });
+        sketchCanvas.removeEventListener('touchend', (e) => {
+          e.preventDefault();
+          stopDrawing();
+        });
+
+        sketchCanvas.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          startDrawing(e.touches[0]);
+        }, { passive: false });
+        sketchCanvas.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          draw(e.touches[0]);
+        }, { passive: false });
+        sketchCanvas.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          stopDrawing();
+        }, { passive: false });
+      }
+
+      function getCanvasPosition(e) {
+        const rect = sketchCanvas.getBoundingClientRect();
+        const x = (e.clientX || e.pageX) - rect.left;
+        const y = (e.clientY || e.pageY) - rect.top;
+        return { x, y };
+      }
+
+      function undoSketch() {
+        if (sketchHistory.length > 1) {
+          sketchHistory.pop();
+          const img = new Image();
+          img.onload = () => {
+            canvasContext.clearRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+            canvasContext.drawImage(img, 0, 0);
+          };
+          img.src = sketchHistory[sketchHistory.length - 1];
+        }
+      }
+
+      function clearSketch() {
+        canvasContext.fillStyle = sketchBgColor.value;
+        canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+        sketchHistory = [];
+        saveCanvasHistory();
+      }
+
+      function saveSketch() {
+        if (!currentSketchId) return;
+
+        const name = sketchEditorTitle.value.trim() || 'Sans titre';
+        const sketches = getSketches();
+        sketches[currentSketchId] = {
+          name: name,
+          imageData: sketchCanvas.toDataURL('image/png'),
+          createdAt: sketches[currentSketchId]?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          penColor: sketchColor.value,
+          bgColor: sketchBgColor.value
+        };
+
+        setSketches(sketches);
+        saveCurrentSession();
+        setIndicator('Croquis sauvegardé');
+        closeSketchEditor();
+        renderSketchList();
+      }
+
+      function exportAllSketches() {
+        const sketches = getSketches();
+        if (Object.keys(sketches).length === 0) {
+          setIndicator('Aucun croquis à exporter');
+          return;
+        }
+
+        const now = new Date();
+        const timestamp = now.getFullYear() +
+          String(now.getMonth() + 1).padStart(2, '0') +
+          String(now.getDate()).padStart(2, '0');
+
+        const exportData = {
+          sessionName: currentSessionName,
+          exportDate: new Date().toISOString(),
+          sketches: sketches
+        };
+
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+         
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(blob, `croquis-${timestamp}.json`);
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `croquis-${timestamp}.json`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+           
+          link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+           
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }
+
+        setIndicator('Croquis exportés');
+      }
+
+      // Sketch event listeners
+      newSketchBtn.addEventListener('click', () => {
+        const name = sketchNameInput.value.trim() || `Croquis ${Date.now()}`;
+        const sketches = getSketches();
+        const sketchId = `sketch_${Date.now()}`;
+        sketches[sketchId] = {
+          name: name,
+          imageData: '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          penColor: '#000000',
+          bgColor: '#ffffff'
+        };
+        setSketches(sketches);
+        sketchNameInput.value = '';
+        openSketchEditor(sketchId);
+      });
+
+      closeSketchEditorBtn.addEventListener('click', closeSketchEditor);
+      saveSketchBtn.addEventListener('click', saveSketch);
+      clearSketchBtn.addEventListener('click', clearSketch);
+      undoSketchBtn.addEventListener('click', undoSketch);
+      exportSketchesBtn.addEventListener('click', exportAllSketches);
+
+      sketchEditorTitle.addEventListener('change', () => {
+        const name = sketchEditorTitle.value.trim() || 'Sans titre';
+        const sketches = getSketches();
+        if (sketches[currentSketchId]) {
+          sketches[currentSketchId].name = name;
+          setSketches(sketches);
+        }
+      });
+
+      sketchBgColor.addEventListener('change', () => {
+        if (canvasContext) {
+          canvasContext.fillStyle = sketchBgColor.value;
+          canvasContext.fillRect(0, 0, sketchCanvas.width, sketchCanvas.height);
+          saveCanvasHistory();
+        }
+      });
+
+      showHome();
+      setPage(0);
+    })();
+  </script>
+</body>
+</html>
