@@ -43,7 +43,7 @@
 
     .phone-shell {
       width: 100vw;
-      height: 100dvh;
+      height: 100vh;
       padding: var(--shell-pad);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
@@ -1061,6 +1061,16 @@
       function showApp() {
         homeScreen.classList.add('hidden');
         appScreen.classList.remove('hidden');
+      }
+
+      function setIndicator(text) {
+        saveIndicator.textContent = text;
+        clearTimeout(saveMessageTimer);
+        saveMessageTimer = setTimeout(() => {
+          saveIndicator.textContent = currentSessionName
+            ? `Session active : ${currentSessionName}`
+            : 'Aucune session active';
+        }, 1400);
       }
 
       function getStore() {
