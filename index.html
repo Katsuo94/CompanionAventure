@@ -1,0 +1,244 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  
+
+
+  <main class="phone-shell">
+    <section class="screen">
+      <section id="homeScreen" class="home-screen">
+        <div class="home-panel stagger">
+          <p class="eyebrow">Prototype Android</p>
+          <h1>Compagnon d’Aventure</h1>
+          <p class="home-subtitle">Suivi de personnage, inventaire libre et jets de 2 dés à 6 faces.</p>
+
+          <div class="home-actions">
+            <button id="continueBtn" class="home-btn" type="button">Continuer</button>
+            <button id="newSessionBtn" class="home-btn" type="button">Nouvelle partie</button>
+            <button id="loadSessionBtn" class="home-btn secondary" type="button">Charger partie</button>
+            <button id="deleteSessionBtn" class="home-btn secondary" type="button">Supprimer partie</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="appScreen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+        <header class="topbar">
+          <div class="brand">
+            <p class="eyebrow">Prototype Android</p>
+            <h1>Compagnon d’Aventure</h1>
+            <p class="subtitle">Suivi de personnage, inventaire libre et jets de 2 dés à 6 faces.</p>
+          </div>
+
+          <div class="session-box">
+            <label class="small" for="sessionName">Session</label>
+            <input id="sessionName" type="text" placeholder="Session principale" />
+          </div>
+        </header>
+
+        <div class="utility-bar">
+          <button id="backHomeBtn" class="ghost-btn" type="button">← Retour à l’accueil</button>
+          <div id="saveIndicator" class="save-indicator">Aucune session active</div>
+        </div>
+
+        <nav class="tabs" aria-label="Navigation">
+          <button class="tab active" data-tab="0" type="button">Personnage</button>
+          <button class="tab" data-tab="1" type="button">Inventaire</button>
+          <button class="tab" data-tab="2" type="button">Dés</button>
+        </nav>
+
+        <div class="swipe-hint">Glissez vers la gauche ou la droite pour changer d’onglet</div>
+
+        <div class="pages-wrap">
+          <div id="pagesTrack" class="pages-track">
+            <section class="page page1" aria-label="Page personnage">
+              <div class="hero-panel stagger">
+                <div class="hero-head">
+                  <div>
+                    <h2 class="section-title">Fiche de personnage</h2>
+                  </div>
+                  <div class="hero-side-note">Chaque champ est configurable et peut être ajusté rapidement.</div>
+                </div>
+
+                <div class="stats-grid">
+                  <div class="field">
+                    <label class="small" for="hpMax">Points de vie maximum</label>
+                    <div class="number-row">
+                      <input id="hpMax" type="number" value="20" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="hpMax" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="hpMax" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="hpNow">Points de vie actuels</label>
+                    <div class="number-row">
+                      <input id="hpNow" type="number" value="20" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="hpNow" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="hpNow" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="dex">Dextérité</label>
+                    <div class="number-row">
+                      <input id="dex" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="dex" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="dex" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="luck">Chance</label>
+                    <div class="number-row">
+                      <input id="luck" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="luck" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="luck" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small" for="talent">Talent</label>
+                    <div class="number-row">
+                      <input id="talent" type="number" value="0" />
+                      <div class="stepper">
+                        <button class="icon-btn" type="button" data-step-target="talent" data-step="-1">−</button>
+                        <button class="icon-btn" type="button" data-step-target="talent" data-step="1">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label class="small">Sauvegarde</label>
+                    <div class="save-boxes">
+                      <label class="check-tile">
+                        <input id="save1" type="checkbox" />
+                        <span>Case 1</span>
+                      </label>
+                      <label class="check-tile">
+                        <input id="save2" type="checkbox" />
+                        <span>Case 2</span>
+                      </label>
+                      <label class="check-tile">
+                        <input id="save3" type="checkbox" />
+                        <span>Case 3</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label class="small" for="weaponInput">Armes et spécificités</label>
+                    <div class="weapon-input-row">
+                      <input id="weaponInput" type="text" placeholder="Ajouter une arme ou spécificité..." />
+                      <button id="addWeaponBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <div id="weaponsList" aria-live="polite"></div>
+                  </div>
+
+                  <div class="field full">
+                    <label class="small" for="notes">Notes</label>
+                    <textarea id="notes" placeholder="Quêtes, indices, sorts, PNJ, idées..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="page page2" aria-label="Page inventaire">
+              <div class="hero-panel stagger">
+                <div class="section">
+                  <h2 class="section-title">Inventaire</h2>
+                  <p class="section-note">Ajoutez librement les objets du sac, composants, clefs ou consommables.</p>
+
+                  <div class="inventory-input-row">
+                    <input id="inventoryInput" type="text" placeholder="Ajouter un objet..." />
+                    <button id="addInventoryBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                  </div>
+
+                  <div id="inventoryList" aria-live="polite"></div>
+
+                  <div class="inline-actions">
+                    <button id="clearInventoryBtn" class="ghost-btn" type="button">Vider l’inventaire</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="page page3" aria-label="Page dés">
+              <div class="dice-shell stagger">
+                <div class="section">
+                  <h2 class="section-title">Jets de dés</h2>
+                  <p class="section-note">Lancez 2 dés à 6 faces. Aucun historique n’est conservé pour garder une interface légère.</p>
+
+                  <div class="dice-stage">
+                    <div class="die" id="die1" aria-label="Dé numéro 1">
+                      <div class="pip-grid"></div>
+                    </div>
+                    <div class="die" id="die2" aria-label="Dé numéro 2">
+                      <div class="pip-grid"></div>
+                    </div>
+                  </div>
+
+                  <div class="dice-result">
+                    <div id="diceTotal" class="dice-total">—</div>
+                    <div id="diceCaption" class="dice-caption">Touchez le bouton pour lancer</div>
+                  </div>
+
+                  <div class="inline-actions" style="justify-content:center;">
+                    <button id="rollDiceBtn" class="primary-btn" type="button">Lancer les dés</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <div id="sessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 id="sessionModalTitle" class="modal-title">Sessions</h2>
+          <p id="sessionModalText" class="modal-text">Choisissez une session.</p>
+          <div id="sessionList" class="session-list"></div>
+          <div class="modal-actions">
+            <button id="closeSessionModalBtn" class="ghost-btn" type="button">Fermer</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="confirmDeleteModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Confirmer la suppression</h2>
+          <p id="confirmDeleteText" class="modal-text"></p>
+          <div class="modal-actions">
+            <button id="cancelDeleteBtn" class="ghost-btn" type="button">Non</button>
+            <button id="confirmDeleteBtn" class="primary-btn" type="button">Oui</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="newSessionModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Nouvelle partie</h2>
+          <p class="modal-text">Quel nom pour la session ?</p>
+          <div class="field" style="margin-top:4px;">
+            <label class="small" for="newSessionNameInput">Nom de session</label>
+            <input id="newSessionNameInput" type="text" placeholder="Ex. Campagne Nord, Session 1..." />
+          </div>
+          <div class="modal-actions">
+            <button id="cancelNewSessionBtn" class="ghost-btn" type="button">Annuler</button>
+            <button id="confirmNewSessionBtn" class="primary-btn" type="button">Créer</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
