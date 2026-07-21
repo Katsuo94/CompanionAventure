@@ -803,8 +803,6 @@
           <button class="tab" data-tab="2" type="button">Dés</button>
         </nav>
 
-        <div class="swipe-hint">Glissez vers la gauche ou la droite pour changer d’onglet</div>
-
         <div class="pages-wrap">
           <div id="pagesTrack" class="pages-track">
             <section class="page page1" aria-label="Page personnage">
@@ -1063,16 +1061,6 @@
       function showApp() {
         homeScreen.classList.add('hidden');
         appScreen.classList.remove('hidden');
-      }
-
-      function setIndicator(text) {
-        saveIndicator.textContent = text;
-        clearTimeout(saveMessageTimer);
-        saveMessageTimer = setTimeout(() => {
-          saveIndicator.textContent = currentSessionName
-            ? `Session active : ${currentSessionName}`
-            : 'Aucune session active';
-        }, 1400);
       }
 
       function getStore() {
