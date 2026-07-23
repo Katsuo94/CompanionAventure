@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Compagnon d’Aventure — Par Katsuo</title>
+  <title>Compagnon d’Aventure — Créé par Katsuo</title>
 
   <!-- PWA : installation en plein écran depuis l'écran d'accueil -->
   <link rel="manifest" href="manifest.json" />
@@ -727,6 +727,186 @@
       flex-wrap: wrap;
     }
 
+    .field-settings-modal {
+      width: min(100%, 520px);
+      max-height: 88vh;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .field-settings-list {
+      display: grid;
+      gap: 10px;
+      max-height: 56vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .field-settings-empty {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .field-config-item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .field-config-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field-config-label {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .field-config-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field-config-type {
+      width: 100%;
+      min-width: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.88rem;
+    }
+
+    .field-config-type option {
+      background: #1c221f;
+      color: var(--text);
+    }
+
+    .field-config-order {
+      display: inline-flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .field-config-order .icon-btn:disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .field-config-options {
+      display: grid;
+      gap: 8px;
+      padding-top: 6px;
+      margin-top: 2px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+    }
+
+    .field-config-options-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field-config-option-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .field-config-option-input {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .field-config-add-option {
+      justify-self: start;
+      font-size: 0.85rem;
+      padding: 8px 12px;
+    }
+
+    .custom-checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .field-settings-subtitle {
+      margin: 6px 0 -4px;
+      font-family: "Cinzel", serif;
+      font-size: 0.95rem;
+      color: var(--accent);
+    }
+
+    .field-config-item.is-base {
+      border-color: rgba(213,194,140,0.28);
+    }
+
+    .field-config-base-label {
+      font-size: 0.95rem;
+      color: var(--text);
+      min-width: 0;
+      overflow-wrap: anywhere;
+      display: flex;
+      align-items: center;
+    }
+
+    .base-field-inline-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .base-field-inline-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .field-config-static-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .hero-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .gear-btn {
+      font-size: 1.15rem;
+    }
+
     .stagger {
       opacity: 0;
       transform: translateY(12px);
@@ -911,7 +1091,7 @@
     <section class="screen">
       <section id="homeScreen" class="home-screen">
         <div class="home-panel stagger">
-          <p class="eyebrow">Par Katsuo</p>
+          <p class="eyebrow">Créé par Katsuo</p>
           <h1>Compagnon d’Aventure</h1>
           <p class="home-subtitle">Suivi de personnage, inventaire libre et jets de 2 dés à 6 faces.</p>
 
@@ -927,7 +1107,7 @@
       <section id="appScreen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
         <header class="topbar">
           <div class="brand">
-            <p class="eyebrow">Par Katsuo</p>
+            <p class="eyebrow">Créé par Katsuo</p>
             <h1>Compagnon d’Aventure</h1>
           </div>
 
@@ -957,11 +1137,14 @@
                   <div>
                     <h2 class="section-title">Fiche de personnage</h2>
                   </div>
-                  <div class="hero-side-note">Chaque champ est configurable et peut être ajusté rapidement.</div>
+                  <div class="hero-side">
+                    <button id="openFieldSettingsBtn" class="icon-btn gear-btn" type="button" aria-label="Personnaliser les champs" title="Personnaliser les champs">⚙</button>
+                    <div class="hero-side-note">Chaque champ est configurable et peut être ajusté rapidement.</div>
+                  </div>
                 </div>
 
-                <div class="stats-grid">
-                  <div class="field">
+                <div class="stats-grid" id="statsGrid">
+                  <div class="field" id="baseField-hpMax">
                     <label class="small" for="hpMax">Points de vie maximum</label>
                     <div class="number-row">
                       <input id="hpMax" type="number" value="20" />
@@ -972,7 +1155,7 @@
                     </div>
                   </div>
 
-                  <div class="field">
+                  <div class="field" id="baseField-hpNow">
                     <label class="small" for="hpNow">Points de vie actuels</label>
                     <div class="number-row">
                       <input id="hpNow" type="number" value="20" />
@@ -983,7 +1166,7 @@
                     </div>
                   </div>
 
-                  <div class="field">
+                  <div class="field" id="baseField-dex">
                     <label class="small" for="dex">Dextérité</label>
                     <div class="number-row">
                       <input id="dex" type="number" value="0" />
@@ -994,7 +1177,7 @@
                     </div>
                   </div>
 
-                  <div class="field">
+                  <div class="field" id="baseField-luck">
                     <label class="small" for="luck">Chance</label>
                     <div class="number-row">
                       <input id="luck" type="number" value="0" />
@@ -1005,7 +1188,7 @@
                     </div>
                   </div>
 
-                  <div class="field">
+                  <div class="field" id="baseField-talent">
                     <label class="small" for="talent">Talent</label>
                     <div class="number-row">
                       <input id="talent" type="number" value="0" />
@@ -1016,7 +1199,7 @@
                     </div>
                   </div>
 
-                  <div class="field">
+                  <div class="field" id="baseField-save">
                     <label class="small">Sauvegarde</label>
                     <div class="save-boxes">
                       <label class="check-tile">
@@ -1034,19 +1217,21 @@
                     </div>
                   </div>
 
-                  <div class="field full">
-                    <label class="small" for="weaponInput">Armes et spécificités</label>
-                    <div class="weapon-input-row">
-                      <input id="weaponInput" type="text" placeholder="Ajouter une arme ou spécificité..." />
-                      <button id="addWeaponBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                  <div id="baseField-weapons" style="display: contents;">
+                    <div class="field full">
+                      <label class="small" for="weaponInput">Armes et spécificités</label>
+                      <div class="weapon-input-row">
+                        <input id="weaponInput" type="text" placeholder="Ajouter une arme ou spécificité..." />
+                        <button id="addWeaponBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
+                      </div>
+                    </div>
+
+                    <div class="field full">
+                      <div id="weaponsList" aria-live="polite"></div>
                     </div>
                   </div>
 
-                  <div class="field full">
-                    <div id="weaponsList" aria-live="polite"></div>
-                  </div>
-
-                  <div class="field full">
+                  <div class="field full" id="baseField-notes">
                     <label class="small" for="notes">Notes</label>
                     <textarea id="notes" placeholder="Quêtes, indices, sorts, PNJ, idées..."></textarea>
                   </div>
@@ -1147,6 +1332,22 @@
         </div>
       </section>
 
+      <div id="fieldSettingsModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal field-settings-modal">
+          <h2 class="modal-title">Personnaliser les champs</h2>
+          <p class="modal-text">Réorganisez librement l'ordre de tous les champs (de base et personnalisés) avec les flèches. Les champs de base peuvent être masqués mais pas supprimés ni renommés.</p>
+
+          <div id="fieldSettingsList" class="field-settings-list"></div>
+
+          <button id="addFieldSettingsBtn" class="ghost-btn" type="button">+ Ajouter un champ</button>
+
+          <div class="modal-actions">
+            <button id="cancelFieldSettingsBtn" class="ghost-btn" type="button">Annuler</button>
+            <button id="saveFieldSettingsBtn" class="primary-btn" type="button">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
       <div id="sessionModal" class="modal-overlay" aria-hidden="true">
         <div class="modal">
           <h2 id="sessionModalTitle" class="modal-title">Sessions</h2>
@@ -1203,6 +1404,119 @@
   <script>
     (() => {
       const STORAGE_KEY = 'compagnon_sessions_store_v2';
+      const CUSTOM_FIELDS_KEY = 'compagnon_custom_fields_v1';
+
+      function loadFieldsConfig() {
+        try {
+          const raw = JSON.parse(localStorage.getItem(CUSTOM_FIELDS_KEY) || '[]');
+          return Array.isArray(raw) ? raw : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveFieldsConfig(config) {
+        localStorage.setItem(CUSTOM_FIELDS_KEY, JSON.stringify(config));
+      }
+
+      let customFieldsConfig = loadFieldsConfig();
+
+      const BASE_FIELDS_KEY = 'compagnon_base_fields_visibility_v1';
+      const DEFAULT_BASE_FIELDS = [
+        { id: 'hpMax', label: 'Points de vie maximum' },
+        { id: 'hpNow', label: 'Points de vie actuels' },
+        { id: 'dex', label: 'Dextérité' },
+        { id: 'luck', label: 'Chance' },
+        { id: 'talent', label: 'Talent' },
+        { id: 'save', label: 'Sauvegarde' },
+        { id: 'weapons', label: 'Armes et spécificités' },
+        { id: 'notes', label: 'Notes' }
+      ];
+
+      function loadBaseFieldsVisibility() {
+        try {
+          const raw = JSON.parse(localStorage.getItem(BASE_FIELDS_KEY) || '{}');
+          return (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveBaseFieldsVisibility(v) {
+        localStorage.setItem(BASE_FIELDS_KEY, JSON.stringify(v));
+      }
+
+      let baseFieldsVisibility = loadBaseFieldsVisibility();
+
+      function isBaseFieldVisible(id) {
+        return baseFieldsVisibility[id] !== false;
+      }
+
+      function applyBaseFieldsVisibility() {
+        DEFAULT_BASE_FIELDS.forEach(f => {
+          const el = document.getElementById('baseField-' + f.id);
+          if (!el) return;
+          const visible = isBaseFieldVisible(f.id);
+          el.style.display = visible ? (f.id === 'weapons' ? 'contents' : '') : 'none';
+        });
+      }
+
+      function genFieldId(prefix) {
+        return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      const FIELD_ORDER_KEY = 'compagnon_field_order_v1';
+
+      function loadFieldOrder() {
+        try {
+          const raw = JSON.parse(localStorage.getItem(FIELD_ORDER_KEY) || '[]');
+          return Array.isArray(raw) ? raw : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveFieldOrderConfig(order) {
+        localStorage.setItem(FIELD_ORDER_KEY, JSON.stringify(order));
+      }
+
+      function buildDefaultFieldOrder() {
+        const order = [];
+        ['hpMax', 'hpNow', 'dex', 'luck', 'talent', 'save'].forEach(key => order.push({ kind: 'base', key }));
+        customFieldsConfig.forEach(f => order.push({ kind: 'custom', key: f.id }));
+        order.push({ kind: 'base', key: 'weapons' });
+        order.push({ kind: 'base', key: 'notes' });
+        return order;
+      }
+
+      function reconcileFieldOrder() {
+        const validBaseKeys = new Set(DEFAULT_BASE_FIELDS.map(f => f.id));
+        const validCustomKeys = new Set(customFieldsConfig.map(f => f.id));
+
+        fieldOrder = fieldOrder.filter(e =>
+          (e.kind === 'base' && validBaseKeys.has(e.key)) ||
+          (e.kind === 'custom' && validCustomKeys.has(e.key))
+        );
+
+        DEFAULT_BASE_FIELDS.forEach(f => {
+          if (!fieldOrder.some(e => e.kind === 'base' && e.key === f.id)) {
+            fieldOrder.push({ kind: 'base', key: f.id });
+          }
+        });
+
+        customFieldsConfig.forEach(f => {
+          if (!fieldOrder.some(e => e.kind === 'custom' && e.key === f.id)) {
+            fieldOrder.push({ kind: 'custom', key: f.id });
+          }
+        });
+      }
+
+      let fieldOrder = loadFieldOrder();
+      if (!fieldOrder.length) fieldOrder = buildDefaultFieldOrder();
+      reconcileFieldOrder();
+      saveFieldOrderConfig(fieldOrder);
+
+      let fieldOrderDraft = [];
       const LAST_SESSION_KEY = 'compagnon_last_session_v2';
 
       const homeScreen = document.getElementById('homeScreen');
@@ -1240,6 +1554,14 @@
       const sessionModalText = document.getElementById('sessionModalText');
       const sessionList = document.getElementById('sessionList');
       const closeSessionModalBtn = document.getElementById('closeSessionModalBtn');
+
+      const statsGrid = document.getElementById('statsGrid');
+      const openFieldSettingsBtn = document.getElementById('openFieldSettingsBtn');
+      const fieldSettingsModal = document.getElementById('fieldSettingsModal');
+      const fieldSettingsList = document.getElementById('fieldSettingsList');
+      const addFieldSettingsBtn = document.getElementById('addFieldSettingsBtn');
+      const cancelFieldSettingsBtn = document.getElementById('cancelFieldSettingsBtn');
+      const saveFieldSettingsBtn = document.getElementById('saveFieldSettingsBtn');
 
       const confirmDeleteModal = document.getElementById('confirmDeleteModal');
       const confirmDeleteText = document.getElementById('confirmDeleteText');
@@ -1340,6 +1662,7 @@
           notes: document.getElementById('notes').value,
           weapons: [...weaponsList.querySelectorAll('.weapon-text')].map(el => el.textContent),
           inventory: [...inventoryList.querySelectorAll('.inventory-text')].map(el => el.textContent),
+          customValues: collectCustomFieldValues(),
           sketches: currentSketches
         };
       }
@@ -1362,6 +1685,8 @@
         inventoryList.innerHTML = '';
         (data.inventory || []).forEach(text => inventoryList.appendChild(createInventoryItem(text)));
 
+        renderCustomFields(data.customValues || {});
+
         renderSketchList();
       }
 
@@ -1379,6 +1704,7 @@
           notes: '',
           weapons: [],
           inventory: [],
+          customValues: {},
           sketches: {}
         };
       }
@@ -1522,6 +1848,269 @@
           saveCurrentSession();
         });
       });
+
+      function createGenericListItem(text) {
+        const item = document.createElement('div');
+        item.className = 'weapon-item';
+
+        const main = document.createElement('div');
+        main.className = 'inventory-main';
+
+        const bullet = document.createElement('div');
+        bullet.className = 'bullet';
+
+        const label = document.createElement('div');
+        label.className = 'weapon-text custom-field-list-text';
+        label.textContent = text;
+
+        main.appendChild(bullet);
+        main.appendChild(label);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'icon-btn';
+        remove.textContent = '−';
+        remove.setAttribute('aria-label', 'Supprimer');
+        remove.addEventListener('click', () => {
+          item.remove();
+          saveCurrentSession();
+        });
+
+        item.appendChild(main);
+        item.appendChild(remove);
+        return item;
+      }
+
+      function defaultCustomValue(type) {
+        if (type === 'number') return 0;
+        if (type === 'checkbox') return {};
+        if (type === 'list') return [];
+        return '';
+      }
+
+      function buildCustomFieldElement(fieldDef, rawValue) {
+        const wrap = document.createElement('div');
+        wrap.dataset.fieldId = fieldDef.id;
+        wrap.dataset.fieldType = fieldDef.type;
+
+        if (fieldDef.type === 'number') {
+          wrap.className = 'field';
+          const value = (typeof rawValue === 'number' || typeof rawValue === 'string') ? rawValue : 0;
+
+          const label = document.createElement('label');
+          label.className = 'small';
+          label.textContent = fieldDef.label;
+
+          const row = document.createElement('div');
+          row.className = 'number-row';
+
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'custom-field-input';
+          input.value = value;
+          input.addEventListener('input', () => saveCurrentSession());
+          input.addEventListener('change', () => saveCurrentSession());
+
+          const stepper = document.createElement('div');
+          stepper.className = 'stepper';
+
+          const minus = document.createElement('button');
+          minus.type = 'button';
+          minus.className = 'icon-btn';
+          minus.textContent = '−';
+          minus.setAttribute('aria-label', 'Diminuer');
+          minus.addEventListener('click', () => {
+            input.value = (parseInt(input.value, 10) || 0) - 1;
+            saveCurrentSession();
+          });
+
+          const plus = document.createElement('button');
+          plus.type = 'button';
+          plus.className = 'icon-btn';
+          plus.textContent = '+';
+          plus.setAttribute('aria-label', 'Augmenter');
+          plus.addEventListener('click', () => {
+            input.value = (parseInt(input.value, 10) || 0) + 1;
+            saveCurrentSession();
+          });
+
+          stepper.appendChild(minus);
+          stepper.appendChild(plus);
+          row.appendChild(input);
+          row.appendChild(stepper);
+          wrap.appendChild(label);
+          wrap.appendChild(row);
+        } else if (fieldDef.type === 'checkbox') {
+          const options = Array.isArray(fieldDef.options) ? fieldDef.options : [];
+          const values = (rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue)) ? rawValue : {};
+          wrap.className = options.length > 1 ? 'field full' : 'field';
+
+          const label = document.createElement('label');
+          label.className = 'small';
+          label.textContent = fieldDef.label;
+          wrap.appendChild(label);
+
+          if (!options.length) {
+            const tile = document.createElement('label');
+            tile.className = 'check-tile';
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.className = 'custom-field-input';
+            input.dataset.optionId = 'default';
+            input.checked = !!values.default;
+            input.addEventListener('change', () => saveCurrentSession());
+
+            const span = document.createElement('span');
+            span.textContent = fieldDef.label;
+
+            tile.appendChild(input);
+            tile.appendChild(span);
+            wrap.appendChild(tile);
+          } else {
+            const group = document.createElement('div');
+            group.className = 'custom-checkbox-group';
+
+            options.forEach(opt => {
+              const tile = document.createElement('label');
+              tile.className = 'check-tile';
+
+              const input = document.createElement('input');
+              input.type = 'checkbox';
+              input.className = 'custom-field-input';
+              input.dataset.optionId = opt.id;
+              input.checked = !!values[opt.id];
+              input.addEventListener('change', () => saveCurrentSession());
+
+              const span = document.createElement('span');
+              span.textContent = opt.label;
+
+              tile.appendChild(input);
+              tile.appendChild(span);
+              group.appendChild(tile);
+            });
+
+            wrap.appendChild(group);
+          }
+        } else if (fieldDef.type === 'text') {
+          wrap.className = 'field full';
+          const value = (typeof rawValue === 'string') ? rawValue : '';
+
+          const label = document.createElement('label');
+          label.className = 'small';
+          label.textContent = fieldDef.label;
+
+          const textarea = document.createElement('textarea');
+          textarea.className = 'custom-field-input';
+          textarea.placeholder = `${fieldDef.label}...`;
+          textarea.value = value;
+          textarea.addEventListener('input', () => saveCurrentSession());
+          textarea.addEventListener('change', () => saveCurrentSession());
+
+          wrap.appendChild(label);
+          wrap.appendChild(textarea);
+        } else if (fieldDef.type === 'list') {
+          wrap.className = 'field full';
+          const values = Array.isArray(rawValue) ? rawValue : [];
+
+          const label = document.createElement('label');
+          label.className = 'small';
+          label.textContent = fieldDef.label;
+
+          const row = document.createElement('div');
+          row.className = 'weapon-input-row';
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = `Ajouter : ${fieldDef.label}...`;
+
+          const addBtn = document.createElement('button');
+          addBtn.type = 'button';
+          addBtn.className = 'round-add';
+          addBtn.textContent = '+';
+          addBtn.setAttribute('aria-label', 'Ajouter');
+
+          const listContainer = document.createElement('div');
+          listContainer.className = 'custom-field-list';
+
+          function addItem() {
+            const text = input.value.trim();
+            if (!text) return;
+            listContainer.appendChild(createGenericListItem(text));
+            input.value = '';
+            input.focus();
+            saveCurrentSession();
+          }
+
+          addBtn.addEventListener('click', addItem);
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addItem();
+            }
+          });
+
+          values.forEach(text => listContainer.appendChild(createGenericListItem(text)));
+
+          row.appendChild(input);
+          row.appendChild(addBtn);
+          wrap.appendChild(label);
+          wrap.appendChild(row);
+          wrap.appendChild(listContainer);
+        }
+
+        return wrap;
+      }
+
+      let customFieldElements = {};
+
+      function renderCustomFields(values) {
+        Object.values(customFieldElements).forEach(el => el.remove());
+        customFieldElements = {};
+        customFieldsConfig.forEach(fieldDef => {
+          const rawValue = (values && values[fieldDef.id] !== undefined)
+            ? values[fieldDef.id]
+            : defaultCustomValue(fieldDef.type);
+          customFieldElements[fieldDef.id] = buildCustomFieldElement(fieldDef, rawValue);
+        });
+        applyFieldOrder();
+      }
+
+      function applyFieldOrder() {
+        fieldOrder.forEach(entry => {
+          let el = null;
+          if (entry.kind === 'base') {
+            el = document.getElementById('baseField-' + entry.key);
+          } else if (entry.kind === 'custom') {
+            el = customFieldElements[entry.key];
+          }
+          if (el) statsGrid.appendChild(el);
+        });
+        applyBaseFieldsVisibility();
+      }
+
+      function collectCustomFieldValues() {
+        const values = {};
+        statsGrid.querySelectorAll('[data-field-id]').forEach(wrap => {
+          const id = wrap.dataset.fieldId;
+          const type = wrap.dataset.fieldType;
+          if (type === 'number') {
+            values[id] = wrap.querySelector('.custom-field-input').value;
+          } else if (type === 'checkbox') {
+            const optValues = {};
+            wrap.querySelectorAll('.custom-field-input[type="checkbox"]').forEach(input => {
+              optValues[input.dataset.optionId] = input.checked;
+            });
+            values[id] = optValues;
+          } else if (type === 'text') {
+            values[id] = wrap.querySelector('.custom-field-input').value;
+          } else if (type === 'list') {
+            values[id] = [...wrap.querySelectorAll('.custom-field-list-text')].map(el => el.textContent);
+          }
+        });
+        return values;
+      }
+
 
       function createWeaponItem(text) {
         const item = document.createElement('div');
@@ -1763,6 +2352,10 @@
         if (e.target === sessionModal) closeSessionModal();
       });
 
+      fieldSettingsModal.addEventListener('click', (e) => {
+        if (e.target === fieldSettingsModal) closeFieldSettingsModal();
+      });
+
       cancelDeleteBtn.addEventListener('click', () => {
         sessionPendingDelete = null;
         confirmDeleteModal.classList.remove('open');
@@ -1851,6 +2444,281 @@
         el.addEventListener('change', () => {
           if (!appScreen.classList.contains('hidden') && currentSessionName) saveCurrentSession();
         });
+      });
+
+      // ========== FIELD SETTINGS (écran de personnalisation des champs) ==========
+      function openFieldSettingsModal() {
+        fieldOrderDraft = fieldOrder.map(entry => {
+          if (entry.kind === 'base') {
+            const base = DEFAULT_BASE_FIELDS.find(f => f.id === entry.key);
+            return {
+              kind: 'base',
+              key: entry.key,
+              label: base ? base.label : entry.key,
+              visible: isBaseFieldVisible(entry.key)
+            };
+          }
+          const custom = customFieldsConfig.find(f => f.id === entry.key);
+          return {
+            kind: 'custom',
+            key: entry.key,
+            label: custom ? custom.label : '',
+            type: custom ? custom.type : 'number',
+            options: (custom && Array.isArray(custom.options)) ? custom.options.map(o => ({ ...o })) : []
+          };
+        });
+        renderFieldSettingsList();
+        fieldSettingsModal.classList.add('open');
+      }
+
+      function closeFieldSettingsModal() {
+        fieldSettingsModal.classList.remove('open');
+      }
+
+      function renderFieldSettingsList() {
+        fieldSettingsList.innerHTML = '';
+
+        if (!fieldOrderDraft.length) {
+          const empty = document.createElement('div');
+          empty.className = 'field-settings-empty';
+          empty.textContent = 'Aucun champ pour le moment.';
+          fieldSettingsList.appendChild(empty);
+          return;
+        }
+
+        fieldOrderDraft.forEach((entry, index) => {
+          const row = document.createElement('div');
+          row.className = entry.kind === 'base' ? 'field-config-item is-base' : 'field-config-item';
+
+          const top = document.createElement('div');
+          top.className = 'field-config-top';
+
+          if (entry.kind === 'base') {
+            const labelEl = document.createElement('div');
+            labelEl.className = 'field-config-base-label';
+            labelEl.textContent = entry.label;
+
+            const visToggle = document.createElement('label');
+            visToggle.className = 'base-field-inline-toggle';
+
+            const visInput = document.createElement('input');
+            visInput.type = 'checkbox';
+            visInput.checked = entry.visible;
+            visInput.addEventListener('change', () => {
+              entry.visible = visInput.checked;
+            });
+
+            const visText = document.createElement('span');
+            visText.textContent = 'Afficher';
+
+            visToggle.appendChild(visInput);
+            visToggle.appendChild(visText);
+
+            top.appendChild(labelEl);
+            top.appendChild(visToggle);
+          } else {
+            const labelInput = document.createElement('input');
+            labelInput.type = 'text';
+            labelInput.className = 'field-config-label';
+            labelInput.placeholder = 'Nom du champ (ex : Constitution)';
+            labelInput.value = entry.label;
+            labelInput.addEventListener('input', () => {
+              entry.label = labelInput.value;
+            });
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'icon-btn';
+            removeBtn.textContent = '×';
+            removeBtn.setAttribute('aria-label', 'Supprimer ce champ');
+            removeBtn.addEventListener('click', () => {
+              fieldOrderDraft.splice(index, 1);
+              renderFieldSettingsList();
+            });
+
+            top.appendChild(labelInput);
+            top.appendChild(removeBtn);
+          }
+
+          row.appendChild(top);
+
+          const bottom = document.createElement('div');
+          bottom.className = 'field-config-bottom';
+
+          if (entry.kind === 'custom') {
+            const typeSelect = document.createElement('select');
+            typeSelect.className = 'field-config-type';
+            [
+              ['number', 'Nombre'],
+              ['checkbox', 'Case à cocher'],
+              ['list', 'Liste (ajout / suppression)'],
+              ['text', 'Zone de texte']
+            ].forEach(([val, txt]) => {
+              const opt = document.createElement('option');
+              opt.value = val;
+              opt.textContent = txt;
+              if (val === entry.type) opt.selected = true;
+              typeSelect.appendChild(opt);
+            });
+            typeSelect.addEventListener('change', () => {
+              entry.type = typeSelect.value;
+              if (entry.type === 'checkbox' && !entry.options.length) {
+                entry.options = [{ id: genFieldId('opt'), label: '' }];
+              }
+              renderFieldSettingsList();
+            });
+            bottom.appendChild(typeSelect);
+          } else {
+            const staticNote = document.createElement('div');
+            staticNote.className = 'field-config-static-note';
+            staticNote.textContent = 'Champ de base — type fixe';
+            bottom.appendChild(staticNote);
+          }
+
+          const orderBtns = document.createElement('div');
+          orderBtns.className = 'field-config-order';
+
+          const upBtn = document.createElement('button');
+          upBtn.type = 'button';
+          upBtn.className = 'icon-btn';
+          upBtn.textContent = '↑';
+          upBtn.setAttribute('aria-label', 'Monter ce champ');
+          upBtn.disabled = index === 0;
+          upBtn.addEventListener('click', () => {
+            if (index === 0) return;
+            [fieldOrderDraft[index - 1], fieldOrderDraft[index]] =
+              [fieldOrderDraft[index], fieldOrderDraft[index - 1]];
+            renderFieldSettingsList();
+          });
+
+          const downBtn = document.createElement('button');
+          downBtn.type = 'button';
+          downBtn.className = 'icon-btn';
+          downBtn.textContent = '↓';
+          downBtn.setAttribute('aria-label', 'Descendre ce champ');
+          downBtn.disabled = index === fieldOrderDraft.length - 1;
+          downBtn.addEventListener('click', () => {
+            if (index === fieldOrderDraft.length - 1) return;
+            [fieldOrderDraft[index + 1], fieldOrderDraft[index]] =
+              [fieldOrderDraft[index], fieldOrderDraft[index + 1]];
+            renderFieldSettingsList();
+          });
+
+          orderBtns.appendChild(upBtn);
+          orderBtns.appendChild(downBtn);
+          bottom.appendChild(orderBtns);
+
+          row.appendChild(bottom);
+
+          if (entry.kind === 'custom' && entry.type === 'checkbox') {
+            if (!Array.isArray(entry.options)) entry.options = [];
+
+            const optionsWrap = document.createElement('div');
+            optionsWrap.className = 'field-config-options';
+
+            const optionsTitle = document.createElement('div');
+            optionsTitle.className = 'field-config-options-title';
+            optionsTitle.textContent = 'Cases à cocher';
+            optionsWrap.appendChild(optionsTitle);
+
+            entry.options.forEach((opt, optIndex) => {
+              const optRow = document.createElement('div');
+              optRow.className = 'field-config-option-row';
+
+              const optInput = document.createElement('input');
+              optInput.type = 'text';
+              optInput.className = 'field-config-option-input';
+              optInput.placeholder = `Nom de la case ${optIndex + 1} (ex : Empoisonné)`;
+              optInput.value = opt.label;
+              optInput.addEventListener('input', () => {
+                opt.label = optInput.value;
+              });
+
+              const optRemove = document.createElement('button');
+              optRemove.type = 'button';
+              optRemove.className = 'icon-btn';
+              optRemove.textContent = '×';
+              optRemove.setAttribute('aria-label', 'Supprimer cette case');
+              optRemove.addEventListener('click', () => {
+                entry.options.splice(optIndex, 1);
+                renderFieldSettingsList();
+              });
+
+              optRow.appendChild(optInput);
+              optRow.appendChild(optRemove);
+              optionsWrap.appendChild(optRow);
+            });
+
+            const addOptionBtn = document.createElement('button');
+            addOptionBtn.type = 'button';
+            addOptionBtn.className = 'ghost-btn field-config-add-option';
+            addOptionBtn.textContent = '+ Ajouter une case';
+            addOptionBtn.addEventListener('click', () => {
+              entry.options.push({ id: genFieldId('opt'), label: '' });
+              renderFieldSettingsList();
+            });
+            optionsWrap.appendChild(addOptionBtn);
+
+            row.appendChild(optionsWrap);
+          }
+
+          fieldSettingsList.appendChild(row);
+        });
+      }
+
+      openFieldSettingsBtn.addEventListener('click', openFieldSettingsModal);
+      cancelFieldSettingsBtn.addEventListener('click', closeFieldSettingsModal);
+
+      addFieldSettingsBtn.addEventListener('click', () => {
+        fieldOrderDraft.push({
+          kind: 'custom',
+          key: genFieldId('cf'),
+          label: '',
+          type: 'number',
+          options: []
+        });
+        renderFieldSettingsList();
+        fieldSettingsList.scrollTop = fieldSettingsList.scrollHeight;
+      });
+
+      saveFieldSettingsBtn.addEventListener('click', () => {
+        const currentValues = collectCustomFieldValues();
+
+        const cleanedCustom = [];
+        const newOrder = [];
+        const newBaseVisibility = {};
+
+        fieldOrderDraft.forEach(entry => {
+          if (entry.kind === 'base') {
+            newBaseVisibility[entry.key] = entry.visible;
+            newOrder.push({ kind: 'base', key: entry.key });
+          } else {
+            const label = (entry.label || '').trim();
+            if (!label) return;
+            const cleanedField = { id: entry.key, label, type: entry.type };
+            if (entry.type === 'checkbox') {
+              cleanedField.options = (entry.options || [])
+                .map(o => ({ ...o, label: (o.label || '').trim() }))
+                .filter(o => o.label.length > 0);
+            }
+            cleanedCustom.push(cleanedField);
+            newOrder.push({ kind: 'custom', key: entry.key });
+          }
+        });
+
+        customFieldsConfig = cleanedCustom;
+        saveFieldsConfig(customFieldsConfig);
+
+        baseFieldsVisibility = newBaseVisibility;
+        saveBaseFieldsVisibility(baseFieldsVisibility);
+
+        fieldOrder = newOrder;
+        saveFieldOrderConfig(fieldOrder);
+
+        renderCustomFields(currentValues);
+        if (!appScreen.classList.contains('hidden') && currentSessionName) saveCurrentSession();
+
+        closeFieldSettingsModal();
       });
 
       // ========== MANAGE SESSIONS & IMPORT/EXPORT ==========
@@ -2314,6 +3182,7 @@
 
       showHome();
       setPage(0);
+      applyBaseFieldsVisibility();
     })();
   </script>
 
