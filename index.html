@@ -1527,9 +1527,18 @@
         const item = document.createElement('div');
         item.className = 'weapon-item';
 
+        const main = document.createElement('div');
+        main.className = 'inventory-main';
+
+        const bullet = document.createElement('div');
+        bullet.className = 'bullet';
+
         const label = document.createElement('div');
         label.className = 'weapon-text';
         label.textContent = text;
+
+        main.appendChild(bullet);
+        main.appendChild(label);
 
         const remove = document.createElement('button');
         remove.type = 'button';
@@ -1541,7 +1550,7 @@
           saveCurrentSession();
         });
 
-        item.appendChild(label);
+        item.appendChild(main);
         item.appendChild(remove);
         return item;
       }
