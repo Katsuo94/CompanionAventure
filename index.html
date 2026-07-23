@@ -2,8 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Compagnon d’Aventure — Prototype Android</title>
+
+  <!-- PWA : installation en plein écran depuis l'écran d'accueil -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#111513" />
+
+  <!-- Android / Chrome -->
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- iOS / Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Compagnon" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2283,6 +2298,47 @@
       showHome();
       setPage(0);
     })();
+  </script>
+
+  <script>
+    // --- Plein écran depuis le raccourci "Écran d'accueil" (Android) ---
+    (function () {
+      const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.navigator.standalone === true; // iOS
+
+      function requestFullscreenSafe() {
+        const el = document.documentElement;
+        const request =
+          el.requestFullscreen ||
+          el.webkitRequestFullscreen ||
+          el.msRequestFullscreen;
+        if (request && !document.fullscreenElement && !document.webkitFullscreenElement) {
+          request.call(el).catch(() => {
+            // Certains navigateurs refusent sans interaction directe : on réessaiera au prochain tap.
+          });
+        }
+      }
+
+      if (isStandalone) {
+        // Certains Android honorent "display: fullscreen" nativement.
+        // Pour les autres, on force via l'API Fullscreen dès la première interaction
+        // (requise par les navigateurs, un appel automatique au chargement est bloqué).
+        requestFullscreenSafe();
+        document.addEventListener('touchend', requestFullscreenSafe, { once: true });
+        document.addEventListener('click', requestFullscreenSafe, { once: true });
+      }
+    })();
+
+    // --- Service worker : installation + fonctionnement hors ligne ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {
+          // L'app fonctionne déjà normalement même si le service worker échoue.
+        });
+      });
+    }
   </script>
 </body>
 </html>
