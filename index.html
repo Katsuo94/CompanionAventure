@@ -1188,15 +1188,13 @@
                     </div>
                   </div>
 
-                  <div class="field" id="baseField-talent">
-                    <label class="small" for="talent">Talent</label>
-                    <div class="number-row">
-                      <input id="talent" type="number" value="0" />
-                      <div class="stepper">
-                        <button class="icon-btn" type="button" data-step-target="talent" data-step="-1">−</button>
-                        <button class="icon-btn" type="button" data-step-target="talent" data-step="1">+</button>
-                      </div>
+                  <div class="field full" id="baseField-talent">
+                    <label class="small" for="talentInput">Talent</label>
+                    <div class="weapon-input-row">
+                      <input id="talentInput" type="text" placeholder="Ajouter un talent..." />
+                      <button id="addTalentBtn" class="round-add" type="button" aria-label="Ajouter">+</button>
                     </div>
+                    <div id="talentList" aria-live="polite"></div>
                   </div>
 
                   <div class="field" id="baseField-save">
@@ -1536,6 +1534,9 @@
 
       const weaponInput = document.getElementById('weaponInput');
       const addWeaponBtn = document.getElementById('addWeaponBtn');
+      const talentInput = document.getElementById('talentInput');
+      const addTalentBtn = document.getElementById('addTalentBtn');
+      const talentList = document.getElementById('talentList');
       const weaponsList = document.getElementById('weaponsList');
 
       const inventoryInput = document.getElementById('inventoryInput');
@@ -1655,7 +1656,7 @@
           hpNow: document.getElementById('hpNow').value,
           dex: document.getElementById('dex').value,
           luck: document.getElementById('luck').value,
-          talent: document.getElementById('talent').value,
+          talent: [...talentList.querySelectorAll('.custom-field-list-text')].map(el => el.textContent),
           save1: document.getElementById('save1').checked,
           save2: document.getElementById('save2').checked,
           save3: document.getElementById('save3').checked,
@@ -1673,7 +1674,11 @@
         document.getElementById('hpNow').value = data.hpNow ?? 20;
         document.getElementById('dex').value = data.dex ?? 0;
         document.getElementById('luck').value = data.luck ?? 0;
-        document.getElementById('talent').value = data.talent ?? 0;
+        talentList.innerHTML = '';
+        (Array.isArray(data.talent)
+          ? data.talent
+          : (data.talent !== undefined && data.talent !== null && data.talent !== '' ? [String(data.talent)] : [])
+        ).forEach(text => talentList.appendChild(createGenericListItem(text)));
         document.getElementById('save1').checked = !!data.save1;
         document.getElementById('save2').checked = !!data.save2;
         document.getElementById('save3').checked = !!data.save3;
@@ -1697,7 +1702,7 @@
           hpNow: 20,
           dex: 0,
           luck: 0,
-          talent: 0,
+          talent: [],
           save1: false,
           save2: false,
           save3: false,
@@ -2183,6 +2188,22 @@
         weaponInput.value = '';
         saveCurrentSession();
       }
+
+      function addTalent() {
+        const value = talentInput.value.trim();
+        if (!value) return;
+        talentList.appendChild(createGenericListItem(value));
+        talentInput.value = '';
+        saveCurrentSession();
+      }
+
+      addTalentBtn.addEventListener('click', addTalent);
+      talentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addTalent();
+        }
+      });
 
       function addInventory() {
         const value = inventoryInput.value.trim();
