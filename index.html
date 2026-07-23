@@ -1661,6 +1661,11 @@
         diceTotal.textContent = '…';
         diceCaption.textContent = 'Les dés roulent...';
 
+        // 3 petites vibrations rythmées sur la durée de l'animation (si l'appareil le permet)
+        if ('vibrate' in navigator) {
+          navigator.vibrate([30, 370, 30, 370, 30]);
+        }
+
         let count = 0;
         const flicker = setInterval(() => {
           renderDie(die1, randomDie());
