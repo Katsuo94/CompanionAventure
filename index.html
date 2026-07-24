@@ -630,6 +630,101 @@
 
     .die.rolling { animation: dice-rotate 1.05s ease forwards; }
 
+    .dice-stage.hidden { display: none; }
+
+    .cube-stage {
+      perspective: 700px;
+    }
+
+    .cube-scene {
+      perspective: 700px;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      max-width: 145px;
+      aspect-ratio: 1;
+      margin: 0 auto;
+    }
+
+    .cube3d {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cube-face {
+      position: absolute;
+      inset: 0;
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, #202622, #171c19);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      backface-visibility: hidden;
+    }
+
+    .cube-face .pip-grid { width: 74%; height: 74%; }
+
+    .cube-face-1 { transform: translateZ(48px); }
+    .cube-face-2 { transform: rotateY(90deg) translateZ(48px); }
+    .cube-face-3 { transform: rotateX(-90deg) translateZ(48px); }
+    .cube-face-4 { transform: rotateX(90deg) translateZ(48px); }
+    .cube-face-5 { transform: rotateY(-90deg) translateZ(48px); }
+    .cube-face-6 { transform: rotateY(180deg) translateZ(48px); }
+
+    .dice-style-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .dice-style-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+    }
+
+    .dice-style-option:has(input:checked) {
+      border-color: var(--gold);
+      background: rgba(213,194,140,0.08);
+    }
+
+    .dice-style-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .dice-style-option-text {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .dice-style-option-title {
+      font-size: 0.92rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .dice-style-option-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
     .pip-grid {
       width: 74%;
       height: 74%;
@@ -1070,6 +1165,13 @@
     }
 
     @media (max-width: 420px) {
+      .cube3d, .cube-face { width: 78px; height: 78px; }
+      .cube-face-1 { transform: translateZ(39px); }
+      .cube-face-2 { transform: rotateY(90deg) translateZ(39px); }
+      .cube-face-3 { transform: rotateX(-90deg) translateZ(39px); }
+      .cube-face-4 { transform: rotateX(90deg) translateZ(39px); }
+      .cube-face-5 { transform: rotateY(-90deg) translateZ(39px); }
+      .cube-face-6 { transform: rotateY(180deg) translateZ(39px); }
       :root {
         --shell-pad: 10px;
         --radius-screen: 24px;
@@ -1260,8 +1362,16 @@
             <section class="page page3" aria-label="Page dés">
               <div class="dice-shell stagger">
                 <div class="section">
-                  <h2 class="section-title">Jets de dés</h2>
-                  <div class="dice-stage">
+                  <div class="hero-head">
+                    <div>
+                      <h2 class="section-title">Jets de dés</h2>
+                    </div>
+                    <div class="hero-side">
+                      <button id="openDiceSettingsBtn" class="icon-btn gear-btn" type="button" aria-label="Personnaliser les dés" title="Personnaliser les dés">⚙</button>
+                    </div>
+                  </div>
+
+                  <div class="dice-stage" id="classicDiceStage">
                     <div class="die" id="die1" aria-label="Dé numéro 1">
                       <div class="pip-grid"></div>
                     </div>
@@ -1270,13 +1380,37 @@
                     </div>
                   </div>
 
-                  <div class="dice-result">
-                    <div id="diceTotal" class="dice-total">—</div>
-                    <div id="diceCaption" class="dice-caption">Touchez le bouton pour lancer</div>
+                  <div class="dice-stage cube-stage hidden" id="cubeStage">
+                    <div class="cube-scene" id="die1CubeScene">
+                      <div class="cube3d" id="die1Cube">
+                        <div class="cube-face cube-face-1"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-2"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-3"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-4"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-5"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-6"><div class="pip-grid"></div></div>
+                      </div>
+                    </div>
+                    <div class="cube-scene" id="die2CubeScene">
+                      <div class="cube3d" id="die2Cube">
+                        <div class="cube-face cube-face-1"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-2"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-3"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-4"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-5"><div class="pip-grid"></div></div>
+                        <div class="cube-face cube-face-6"><div class="pip-grid"></div></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="inline-actions" style="justify-content:center;">
-                    <button id="rollDiceBtn" class="primary-btn" type="button">Lancer les dés</button>
+                  <div class="dice-result">
+                    <div id="diceTotal" class="dice-total">—</div>
+                    <div id="diceCaption" class="dice-caption">Touchez un bouton pour lancer</div>
+                  </div>
+
+                  <div class="inline-actions" style="justify-content:center; flex-wrap: wrap;">
+                    <button id="rollOneBtn" class="primary-btn" type="button">Lancer un dé</button>
+                    <button id="rollTwoBtn" class="primary-btn" type="button">Lancer deux dés</button>
                   </div>
                 </div>
               </div>
@@ -1329,6 +1463,35 @@
           </div>
         </div>
       </section>
+
+      <div id="diceSettingsModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal">
+          <h2 class="modal-title">Personnaliser les dés</h2>
+          <p class="modal-text">Choisissez le style d'animation utilisé lors du lancer.</p>
+
+          <div class="dice-style-options">
+            <label class="dice-style-option">
+              <input type="radio" name="diceStyle" value="classic" />
+              <div class="dice-style-option-text">
+                <div class="dice-style-option-title">Animation classique</div>
+                <div class="dice-style-option-desc">Les dés tremblent puis affichent le résultat.</div>
+              </div>
+            </label>
+            <label class="dice-style-option">
+              <input type="radio" name="diceStyle" value="cube3d" />
+              <div class="dice-style-option-text">
+                <div class="dice-style-option-title">Animation 3D</div>
+                <div class="dice-style-option-desc">Un dé en volume bascule sur lui-même avant de s'arrêter sur le résultat.</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button id="cancelDiceSettingsBtn" class="ghost-btn" type="button">Annuler</button>
+            <button id="saveDiceSettingsBtn" class="primary-btn" type="button">Enregistrer</button>
+          </div>
+        </div>
+      </div>
 
       <div id="fieldSettingsModal" class="modal-overlay" aria-hidden="true">
         <div class="modal field-settings-modal">
@@ -1517,6 +1680,16 @@
       let fieldOrderDraft = [];
       const LAST_SESSION_KEY = 'compagnon_last_session_v2';
 
+      const DICE_STYLE_KEY = 'compagnon_dice_style_v1';
+      function loadDiceStyle() {
+        const v = localStorage.getItem(DICE_STYLE_KEY);
+        return v === 'cube3d' ? 'cube3d' : 'classic';
+      }
+      function saveDiceStyleConfig(style) {
+        localStorage.setItem(DICE_STYLE_KEY, style);
+      }
+      let diceStyle = loadDiceStyle();
+
       const homeScreen = document.getElementById('homeScreen');
       const appScreen = document.getElementById('appScreen');
 
@@ -1548,7 +1721,19 @@
       const die2 = document.getElementById('die2');
       const diceTotal = document.getElementById('diceTotal');
       const diceCaption = document.getElementById('diceCaption');
-      const rollDiceBtn = document.getElementById('rollDiceBtn');
+      const rollOneBtn = document.getElementById('rollOneBtn');
+      const rollTwoBtn = document.getElementById('rollTwoBtn');
+      const classicDiceStage = document.getElementById('classicDiceStage');
+      const cubeStage = document.getElementById('cubeStage');
+      const die1Cube = document.getElementById('die1Cube');
+      const die2Cube = document.getElementById('die2Cube');
+      const die1CubeScene = document.getElementById('die1CubeScene');
+      const die2CubeScene = document.getElementById('die2CubeScene');
+      const openDiceSettingsBtn = document.getElementById('openDiceSettingsBtn');
+      const diceSettingsModal = document.getElementById('diceSettingsModal');
+      const cancelDiceSettingsBtn = document.getElementById('cancelDiceSettingsBtn');
+      const saveDiceSettingsBtn = document.getElementById('saveDiceSettingsBtn');
+      const diceStyleRadios = document.querySelectorAll('input[name="diceStyle"]');
 
       const sessionModal = document.getElementById('sessionModal');
       const sessionModalTitle = document.getElementById('sessionModalTitle');
@@ -2244,6 +2429,17 @@
         6: [0, 2, 3, 5, 6, 8]
       };
 
+      // Rotation à appliquer au cube pour amener chaque face vers l'avant
+      // (opposées : 1↔6, 2↔5, 3↔4, comme un dé physique classique)
+      const CUBE_FACE_TARGET = {
+        1: { x: 0, y: 0 },
+        2: { x: 0, y: -90 },
+        3: { x: 90, y: 0 },
+        4: { x: -90, y: 0 },
+        5: { x: 0, y: 90 },
+        6: { x: 0, y: 180 }
+      };
+
       function buildDieGrid(dieEl) {
         const grid = dieEl.querySelector('.pip-grid');
         grid.innerHTML = '';
@@ -2265,42 +2461,200 @@
         return Math.floor(Math.random() * 6) + 1;
       }
 
-      function rollDice() {
+      // ---- Style classique (tremblement + résultat) ----
+      function rollClassicDice(diceCount) {
         die1.classList.add('rolling');
-        die2.classList.add('rolling');
+        if (diceCount === 2) die2.classList.add('rolling');
         diceTotal.textContent = '…';
         diceCaption.textContent = 'Les dés roulent...';
-
-        // 3 petites vibrations rythmées sur la durée de l'animation (si l'appareil le permet)
-        if ('vibrate' in navigator) {
-          navigator.vibrate([30, 370, 30, 370, 30]);
-        }
 
         let count = 0;
         const flicker = setInterval(() => {
           renderDie(die1, randomDie());
-          renderDie(die2, randomDie());
+          if (diceCount === 2) renderDie(die2, randomDie());
           count++;
           if (count >= 8) clearInterval(flicker);
         }, 80);
 
         setTimeout(() => {
           const a = randomDie();
-          const b = randomDie();
           renderDie(die1, a);
-          renderDie(die2, b);
-          diceTotal.textContent = a + b;
-          diceCaption.textContent = `Résultat : ${a} + ${b}`;
           die1.classList.remove('rolling');
-          die2.classList.remove('rolling');
+
+          if (diceCount === 2) {
+            const b = randomDie();
+            renderDie(die2, b);
+            die2.classList.remove('rolling');
+            diceTotal.textContent = a + b;
+            diceCaption.textContent = `Résultat : ${a} + ${b}`;
+          } else {
+            diceTotal.textContent = a;
+            diceCaption.textContent = `Résultat : ${a}`;
+          }
         }, 900);
+      }
+
+      // ---- Style 3D (cube qui bascule sur lui-même) ----
+      const cubeRotationState = {
+        die1: { x: 0, y: 0 },
+        die2: { x: 0, y: 0 }
+      };
+
+      // Séquence d'à-coups pour simuler un vrai lancer : chaque étape couvre une part
+      // décroissante de la rotation totale sur une durée croissante → l'effet ralentit
+      // progressivement au lieu de tourner à vitesse constante.
+      const CUBE_TUMBLE_STEPS = [
+        { fraction: 0.30, duration: 130, ease: 'cubic-bezier(0.45,0,0.55,1)' },
+        { fraction: 0.24, duration: 160, ease: 'cubic-bezier(0.45,0,0.55,1)' },
+        { fraction: 0.18, duration: 210, ease: 'cubic-bezier(0.45,0,0.55,1)' },
+        { fraction: 0.13, duration: 280, ease: 'ease-out' },
+        { fraction: 0.10, duration: 390, ease: 'ease-out' },
+        { fraction: 0.05, duration: 490, ease: 'cubic-bezier(0.34,1.56,0.64,1)' }
+      ];
+
+      // Fractions normalisées et légèrement bruitées, pour que la vitesse ne soit
+      // jamais parfaitement régulière ni identique d'un axe ou d'un dé à l'autre.
+      function jitteredTumbleFractions() {
+        const jittered = CUBE_TUMBLE_STEPS.map(s => s.fraction * (0.7 + Math.random() * 0.6));
+        const sum = jittered.reduce((s, f) => s + f, 0);
+        return jittered.map(f => f / sum);
+      }
+
+      function tumbleCube(cubeEl, stateKey, startDelay) {
+        const value = randomDie();
+        const target = CUBE_FACE_TARGET[value];
+        const cur = cubeRotationState[stateKey];
+
+        const extraTurnsX = 2 + Math.floor(Math.random() * 2);
+        const extraTurnsY = 2 + Math.floor(Math.random() * 2);
+        const deltaX = (((target.x - cur.x) % 360) + 360) % 360;
+        const deltaY = (((target.y - cur.y) % 360) + 360) % 360;
+        const totalDeltaX = deltaX + extraTurnsX * 360;
+        const totalDeltaY = deltaY + extraTurnsY * 360;
+
+        const fracX = jitteredTumbleFractions();
+        const fracY = jitteredTumbleFractions();
+
+        let cumX = 0;
+        let cumY = 0;
+        let elapsed = 0;
+
+        CUBE_TUMBLE_STEPS.forEach((step, i) => {
+          cumX += fracX[i];
+          cumY += fracY[i];
+          const stepX = cur.x + totalDeltaX * cumX;
+          const stepY = cur.y + totalDeltaY * cumY;
+          // Durée de chaque étape légèrement aléatoire : la cadence n'est jamais
+          // identique deux lancers de suite, ni entre les deux dés.
+          const duration = Math.round(step.duration * (0.8 + Math.random() * 0.4));
+
+          setTimeout(() => {
+            cubeEl.style.transition = `transform ${duration}ms ${step.ease}`;
+            cubeEl.style.transform = `rotateX(${stepX}deg) rotateY(${stepY}deg)`;
+          }, startDelay + elapsed);
+
+          elapsed += duration;
+        });
+
+        cubeRotationState[stateKey] = { x: cur.x + totalDeltaX, y: cur.y + totalDeltaY };
+
+        return { value, totalDuration: startDelay + elapsed };
+      }
+
+      function rollCubeDice(diceCount) {
+        diceTotal.textContent = '…';
+        diceCaption.textContent = 'Les dés roulent...';
+
+        // Sur un double lancer, les deux dés ne "partent" jamais exactement en même
+        // temps — comme dans un vrai lancer à la main — et ce n'est pas toujours le
+        // même dé qui démarre en premier.
+        let delay1 = 0;
+        let delay2 = 0;
+        if (diceCount === 2) {
+          const stagger = 40 + Math.round(Math.random() * 160); // 40 à 200 ms
+          if (Math.random() < 0.5) delay2 = stagger; else delay1 = stagger;
+        }
+
+        const result1 = tumbleCube(die1Cube, 'die1', delay1);
+        const result2 = diceCount === 2 ? tumbleCube(die2Cube, 'die2', delay2) : null;
+
+        const waitFor = Math.max(result1.totalDuration, result2 ? result2.totalDuration : 0) + 60;
+
+        setTimeout(() => {
+          if (diceCount === 2) {
+            diceTotal.textContent = result1.value + result2.value;
+            diceCaption.textContent = `Résultat : ${result1.value} + ${result2.value}`;
+          } else {
+            diceTotal.textContent = result1.value;
+            diceCaption.textContent = `Résultat : ${result1.value}`;
+          }
+        }, waitFor);
+      }
+
+      function rollDice(diceCount) {
+        // 3 petites vibrations rythmées sur la durée de l'animation (si l'appareil le permet)
+        if ('vibrate' in navigator) {
+          navigator.vibrate([30, 370, 30, 370, 30]);
+        }
+
+        if (diceStyle === 'cube3d') {
+          rollCubeDice(diceCount);
+        } else {
+          rollClassicDice(diceCount);
+        }
       }
 
       buildDieGrid(die1);
       buildDieGrid(die2);
       renderDie(die1, 1);
       renderDie(die2, 1);
-      rollDiceBtn.addEventListener('click', rollDice);
+
+      // Chaque face du cube affiche en permanence son propre nombre de points ;
+      // c'est la rotation du cube qui détermine le résultat visible.
+      [die1Cube, die2Cube].forEach(cube => {
+        for (let value = 1; value <= 6; value++) {
+          const face = cube.querySelector(`.cube-face-${value}`);
+          buildDieGrid(face);
+          renderDie(face, value);
+        }
+      });
+
+      rollOneBtn.addEventListener('click', () => rollDice(1));
+      rollTwoBtn.addEventListener('click', () => rollDice(2));
+
+      function applyDiceStyle() {
+        const isCube = diceStyle === 'cube3d';
+        classicDiceStage.classList.toggle('hidden', isCube);
+        cubeStage.classList.toggle('hidden', !isCube);
+      }
+
+      function openDiceSettingsModal() {
+        diceStyleRadios.forEach(r => {
+          r.checked = (r.value === diceStyle);
+        });
+        diceSettingsModal.classList.add('open');
+      }
+
+      function closeDiceSettingsModal() {
+        diceSettingsModal.classList.remove('open');
+      }
+
+      openDiceSettingsBtn.addEventListener('click', openDiceSettingsModal);
+      cancelDiceSettingsBtn.addEventListener('click', closeDiceSettingsModal);
+      diceSettingsModal.addEventListener('click', (e) => {
+        if (e.target === diceSettingsModal) closeDiceSettingsModal();
+      });
+
+      saveDiceSettingsBtn.addEventListener('click', () => {
+        const selected = [...diceStyleRadios].find(r => r.checked);
+        diceStyle = selected ? selected.value : 'classic';
+        saveDiceStyleConfig(diceStyle);
+        applyDiceStyle();
+        closeDiceSettingsModal();
+      });
+
+      applyDiceStyle();
+
 
       function openSessionModal(mode) {
         const store = getStore();
