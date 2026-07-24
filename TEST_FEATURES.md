@@ -49,6 +49,10 @@
 - [ ] Armes et spécificités : ajout affiche une pastille dorée identique à l'inventaire
 - [ ] Notes : la zone de texte enregistre bien le contenu
 
+#### Alignement de l'icône ⚙️ (non-régression mobile) :
+- [ ] Sur mobile (largeur < 760px), l'icône ⚙️ reste bien en haut à droite du bloc "Fiche de personnage", sur la même ligne que le titre — elle ne descend plus sous le titre
+- [ ] Le texte "Chaque champ est configurable et peut être ajusté rapidement." s'aligne à droite, sous l'icône, sans repasser en pleine largeur
+
 #### Écran de personnalisation des champs (icône ⚙️) :
 1. [ ] Cliquer sur l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" → l'écran s'ouvre
 2. [ ] La liste déroulante "type" (Nombre / Case à cocher / Liste / Zone de texte) est lisible (fond sombre, texte clair — pas de fond blanc)
@@ -71,10 +75,44 @@
 17. [ ] Les champs personnalisés et leur ordre sont identiques sur toutes les sessions ; seules les valeurs saisies changent d'une session à l'autre
 
 ### 🎲 Jets de Dés
-- [ ] Lancer les dés → animation de roulement visible
-- [ ] **Android/Chrome** : 3 vibrations courtes ressenties pendant l'animation
-- [ ] **iOS/Safari** : aucune vibration, mais aucune erreur console, l'animation et le résultat fonctionnent normalement
-- [ ] Résultat final affiché correctement
+
+#### Deux dés toujours visibles :
+- [ ] Sur la page Dés, les deux dés (ou les deux cubes en mode 3D) sont visibles en permanence, avant même le premier lancer
+- [ ] Cliquer **"Lancer un dé"** → seul le premier dé tourne/s'anime, le second reste figé sur sa valeur précédente
+- [ ] Cliquer **"Lancer deux dés"** → les deux dés tournent
+- [ ] Le résultat affiché correspond bien à la valeur unique (1 dé) ou à la somme (2 dés)
+- [ ] Cliquer rapidement plusieurs fois sur un bouton pendant qu'une animation est en cours → aucun chevauchement, aucun bug visuel (le clic est ignoré tant que le lancer précédent n'est pas terminé)
+
+#### Icône ⚙️ (alignement + accès) :
+- [ ] Sur mobile, l'icône ⚙️ de la page Dés reste bien en haut à droite du bloc, sur la même ligne que le titre "Jets de dés"
+- [ ] Cliquer dessus → l'écran "Personnaliser les dés" s'ouvre
+
+#### Choix du style d'animation :
+1. [ ] Ouvrir ⚙️ → sélectionner "Animation classique" → Enregistrer → lancer → les dés tremblent puis affichent le résultat (comportement historique)
+2. [ ] Ouvrir ⚙️ → sélectionner "Animation 3D" → Enregistrer → lancer → un cube en volume bascule sur lui-même avant de s'arrêter sur la bonne face
+3. [ ] **Ralentissement naturel (3D)** : la rotation est visiblement plus rapide au début puis ralentit progressivement jusqu'à l'arrêt, sans vitesse constante
+4. [ ] **Irrégularité (3D)** : relancer plusieurs fois → la cadence et l'amplitude de la rotation varient d'un lancer à l'autre, et ne sont jamais parfaitement identiques entre les deux dés
+5. [ ] **Décalage entre les deux dés (3D, "Lancer deux dés")** : les deux cubes ne démarrent pas exactement au même instant et ne s'arrêtent pas forcément en même temps ; ce n'est pas toujours le même dé qui part en premier sur plusieurs lancers successifs
+6. [ ] Le résultat (valeur/somme) ne s'affiche qu'une fois l'animation du dé le plus lent réellement terminée
+7. [ ] Le choix du style est mémorisé après rechargement de la page
+
+#### Vibrations :
+1. [ ] Ouvrir ⚙️ → case "Vibrations pendant le lancer" cochée par défaut → Enregistrer
+2. [ ] **Android/Chrome, animation classique** : 3 impulsions régulières ressenties pendant le tremblement
+3. [ ] **Android/Chrome, animation 3D** : plusieurs petites impulsions ressenties, de plus en plus espacées et un peu plus longues, suivant le ralentissement visuel du cube ; une vibration finale plus marquée ressentie pile au moment où le dé s'arrête
+4. [ ] **Android/Chrome, 3D + "Lancer deux dés"** : chaque dé produit sa propre vibration finale à son propre moment d'arrêt (pas une seule vibration finale commune aux deux)
+5. [ ] Décocher "Vibrations pendant le lancer" → Enregistrer → lancer (dans les deux styles) → aucune vibration, mais animation et résultat fonctionnent normalement
+6. [ ] **iOS/Safari** : aucune vibration quel que soit le réglage (API non supportée), mais aucune erreur console
+
+#### Secouer pour lancer :
+1. [ ] Ouvrir ⚙️ → cocher "Secouer pour lancer" → Enregistrer
+2. [ ] **iOS** : une demande d'autorisation d'accès au mouvement apparaît au moment de cliquer "Enregistrer"
+3. [ ] Autoriser → secouer le téléphone en étant sur la page Dés → un lancer se déclenche automatiquement avec le dernier nombre de dés utilisé (1 ou 2)
+4. [ ] Secouer le téléphone en étant sur une **autre page** (Personnage, Inventaire, Croquis) → aucun lancer ne se déclenche
+5. [ ] Secouer plusieurs fois très rapidement, ou pendant qu'un lancer est déjà en cours → pas de déclenchements multiples ni de chevauchement d'animations
+6. [ ] Décocher "Secouer pour lancer" → Enregistrer → secouer le téléphone → plus aucun lancer ne se déclenche
+7. [ ] **iOS uniquement** : fermer et rouvrir l'app → même si le réglage était activé, l'autorisation doit être redonnée (revenir dans ⚙️ et cliquer "Enregistrer" à nouveau) pour que la détection fonctionne à nouveau — comportement attendu, imposé par Safari
+8. [ ] **Android** : fermer et rouvrir l'app → si le réglage était activé, la détection reprend sans nouvelle demande d'autorisation
 
 ### 🎨 Page Croquis
 
@@ -139,6 +177,7 @@
 - [ ] Changer de session → Croquis et valeurs de champs personnalisés conservés par session
 - [ ] Aller sur un autre onglet puis revenir → État préservé
 - [ ] Fermer et rouvrir l'app installée → dernière session restaurée
+- [ ] Fermer et rouvrir l'app → réglages des dés (style, vibrations, secouer) conservés (sous réserve, pour la détection de mouvement elle-même, de la limite iOS ci-dessus)
 
 ### 📱 Responsive & Tactile
 
@@ -146,6 +185,7 @@
 - [ ] Canvas responsive
 - [ ] Boutons tactiles (hit targets > 44px)
 - [ ] Dessiner au doigt sur mobile
+- [ ] Icônes ⚙️ (Personnage et Dés) toujours en haut à droite, jamais repoussées sous le titre, à toutes les largeurs d'écran testées
 
 ---
 
@@ -166,6 +206,9 @@ F12 → Console tab
   localStorage.getItem('compagnon_custom_fields_v1')
   localStorage.getItem('compagnon_base_fields_visibility_v1')
   localStorage.getItem('compagnon_field_order_v1')
+  localStorage.getItem('compagnon_dice_style_v1')
+  localStorage.getItem('compagnon_dice_vibration_v1')
+  localStorage.getItem('compagnon_dice_shake_v1')
   ```
 
 ### Test export/import en console :
@@ -182,6 +225,13 @@ JSON.parse(localStorage.getItem('compagnon_field_order_v1'));
 // [{kind:'base', key:'hpMax'}, {kind:'custom', key:'cf_abc123'}, ...]
 ```
 
+### Test des réglages des dés en console :
+```javascript
+localStorage.getItem('compagnon_dice_style_v1');      // "classic" ou "cube3d"
+localStorage.getItem('compagnon_dice_vibration_v1');  // "on" ou "off"
+localStorage.getItem('compagnon_dice_shake_v1');      // "on" ou "off"
+```
+
 ---
 
 ## ✨ Cas d'usage avancés
@@ -191,7 +241,8 @@ JSON.parse(localStorage.getItem('compagnon_field_order_v1'));
 3. **Collaboration** : Partager fichier JSON
 4. **Croquis détaillés** : Plusieurs layers via sessions différentes
 5. **Fiche sur mesure** : masquer les champs inutiles pour un système de jeu donné et ajouter uniquement les statistiques pertinentes (ex. Constitution, Niveau, États)
+6. **Mains occupées** : secouer le téléphone pour relancer sans avoir à viser un bouton, pratique en pleine partie
 
 ---
 
-Créé : 2026-07-21 | Mis à jour : 2026-07-23 | Version : 3.0
+Créé : 2026-07-21 | Mis à jour : 2026-07-24 | Version : 4.0

@@ -20,8 +20,8 @@ Une application web mobile pour gérer une partie de jeu de rôle en solo, avec 
 - Notes personnelles
 - **Champs entièrement personnalisables** (voir section dédiée ci-dessous)
 
-### 🛠️ Personnalisation des champs (NEW)
-Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
+### 🛠️ Personnalisation des champs
+Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" (fixée à cet emplacement quelle que soit la taille d'écran, y compris mobile) :
 - **Réorganisation libre** : tous les champs (de base *et* personnalisés) se déplacent avec les flèches ↑ / ↓, sans contrainte de groupe — un champ personnalisé peut être positionné n'importe où entre deux champs de base
 - **Champs de base** (PV max, PV actuel, Dextérité, Chance, Talent, Sauvegarde, Armes et spécificités, Notes) : peuvent être **affichés ou masqués** au besoin, mais restent non renommables et de type fixe
 - **Champs personnalisés** : entièrement libres — nom, type, ordre et suppression
@@ -38,10 +38,16 @@ Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
 - Librement extensible
 
 ### 🎲 Jets de Dés
-- Lancer 2 dés à 6 faces
-- Animation de roulement
-- **3 vibrations rythmées** pendant l'animation (Android/Chrome ; ignoré silencieusement sur iOS, non supporté par Safari)
-- Résultat affiché
+- **Lancer un dé** ou **Lancer deux dés** : les deux boutons sont toujours disponibles, les deux dés restent toujours visibles à l'écran ; seul le(s) dé(s) demandé(s) tourne(nt), l'autre reste figé sur sa dernière valeur
+- **Secouer le téléphone pour lancer** : relance automatiquement le dernier nombre de dés utilisé (1 ou 2), uniquement quand la page Dés est active — activable/désactivable dans les réglages
+- Icône ⚙️ en haut à droite (même emplacement fixe que sur la page Personnage) ouvrant l'écran **"Personnaliser les dés"** :
+  - **Animation classique** : les dés tremblent puis affichent le résultat (comportement d'origine)
+  - **Animation 3D** : un vrai cube en volume, avec un chiffre fixe par face (faces opposées = 7, comme un dé physique), qui bascule sur lui-même par à-coups décroissants pour un effet de lancer naturel — rotation qui ralentit progressivement, vitesse et amplitude légèrement aléatoires sur chaque axe, chaque dé indépendant de l'autre (léger décalage de départ, durée totale différente)
+  - **Vibrations pendant le lancer** (on/off) — rythme différent selon le style choisi :
+    - Classique : 3 impulsions régulières sur la durée du tremblement
+    - 3D : une petite impulsion à chaque à-coup de rotation (de plus en plus longue à mesure que le dé ralentit), plus une vibration finale plus marquée pile au moment où *chaque* dé termine sa propre animation
+  - **Secouer pour lancer** (on/off)
+- Résultat affiché (valeur unique ou somme des deux dés selon le nombre lancé)
 
 ### 🎨 Croquis
 - Créer des croquis
@@ -52,7 +58,7 @@ Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
 - Renommer les croquis
 - Exporter en PNG ou JSON
 
-### 📲 Installation en plein écran (NEW)
+### 📲 Installation en plein écran
 - **Manifest PWA** (`manifest.json`) avec icônes dédiées (192px, 512px, maskable, apple-touch-icon)
 - **Android/Chrome** : "Ajouter à l'écran d'accueil" propose l'installation native, lancement en plein écran
 - **iOS/Safari** : "Sur l'écran d'accueil" masque la barre d'adresse (limite Apple : la barre de statut système reste visible, l'API Fullscreen n'existe pas sur iOS)
@@ -76,6 +82,12 @@ Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
 2. Cliquer sur l'icône **⚙️** en haut à droite du bloc fiche
 3. Réorganiser, masquer, ajouter ou supprimer des champs
 4. **Enregistrer** pour appliquer, ou **Annuler** pour fermer sans changement
+
+### Personnaliser les dés
+1. Aller sur l'onglet **Dés**
+2. Cliquer sur l'icône **⚙️** en haut à droite du bloc
+3. Choisir l'animation (classique ou 3D), activer/désactiver les vibrations et/ou le secouer-pour-lancer
+4. **Enregistrer**. Sur iPhone, l'autorisation d'accès au mouvement est redemandée par Safari à chaque nouvelle ouverture de l'app (limite d'Apple, la permission ne peut pas être mémorisée durablement)
 
 ### Sauvegardes
 - **Automatiques** : À chaque modification
@@ -101,6 +113,9 @@ Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
 - `compagnon_custom_fields_v1` : Définition des champs personnalisés (nom, type, cases nommées)
 - `compagnon_base_fields_visibility_v1` : Visibilité des champs de base (affiché/masqué)
 - `compagnon_field_order_v1` : Ordre d'affichage global de tous les champs (base + personnalisés)
+- `compagnon_dice_style_v1` : Style d'animation des dés (`classic` ou `cube3d`)
+- `compagnon_dice_vibration_v1` : Vibrations des dés activées ou non (`on`/`off`)
+- `compagnon_dice_shake_v1` : Secouer-pour-lancer activé ou non (`on`/`off`, se réinitialise à chaque session sur iOS pour la détection réelle du mouvement, la préférence elle-même reste mémorisée)
 
 ## 📱 Responsive
 
@@ -109,6 +124,7 @@ Accessible via l'icône ⚙️ en haut à droite du bloc "Fiche de personnage" :
 - Touch-friendly (44px+ hit targets)
 - Zoom désactivé pour éviter les bugs
 - `viewport-fit=cover` pour une bonne gestion des encoches/zones sûres en plein écran
+- En-têtes de sections (icône ⚙️ incluse) toujours alignés à droite, sans jamais passer à la ligne sous le titre, quelle que soit la largeur d'écran
 
 ## 🎨 Thème
 
@@ -137,6 +153,7 @@ index.html
     ├── Session management
     ├── State persistence
     ├── Champs personnalisés (config, ordre, rendu dynamique)
+    ├── Dés (styles classique/3D, vibrations, secouer-pour-lancer)
     ├── Sketch drawing
     └── Import/Export
 
@@ -175,6 +192,7 @@ icons/              → icônes PWA
   }
 }
 ```
+> Les réglages des dés (style d'animation, vibrations, secouer-pour-lancer) ne font pas partie de la session : ce sont des préférences globales à l'appareil, pas des données de personnage.
 
 ### Format d'un champ personnalisé
 ```javascript
@@ -189,20 +207,22 @@ icons/              → icônes PWA
 
 ## 🎯 Prochaines améliorations possibles
 
+- [ ] Support d'autres types de dés (d4, d8, d10, d12, d20) pour l'animation classique
 - [ ] Édition des croquis (eraser, couleurs avancées)
 - [ ] Réorganisation par glisser-déposer (en plus des flèches)
+- [ ] Historique des derniers jets de dés
+- [ ] Modèles de fiche prêts à l'emploi selon le système de jeu
 - [ ] Partage via QR code
 - [ ] Synchronisation cloud (Firebase)
-- [ ] Historique des jets
-- [ ] Battestats visualisations
 - [ ] Thème clair
 - [ ] Langue anglaise
 
 ## 📝 Notes
 
-- Première version: Personnage + Inventaire + Dés
-- V2: Export/Import + Croquis
-- V3: Installation en plein écran (PWA), personnalisation complète des champs, vibrations, corrections tactiles
+- Première version : Personnage + Inventaire + Dés
+- V2 : Export/Import + Croquis
+- V3 : Installation en plein écran (PWA), personnalisation complète des champs, vibrations, corrections tactiles
+- V4 : Choix 1/2 dés, animation 3D des dés (avec rythme de lancer naturel et décalage entre les deux dés), secouer-pour-lancer, vibrations différenciées par style et par dé, correctif d'alignement du rouage sur mobile
 - Toutes les données sont persistantes
 - Aucune télémétrie ni tracking
 
@@ -216,5 +236,5 @@ icons/              → icônes PWA
 ---
 
 Créé : 2026-07-21
-Mis à jour : 2026-07-23
+Mis à jour : 2026-07-24
 Maintenu par : Katsuo
