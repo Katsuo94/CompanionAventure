@@ -700,7 +700,8 @@
       background: rgba(213,194,140,0.08);
     }
 
-    .dice-style-option input[type="radio"] {
+    .dice-style-option input[type="radio"],
+    .dice-style-option input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: var(--gold);
@@ -1486,6 +1487,24 @@
             </label>
           </div>
 
+          <h3 class="field-settings-subtitle">Vibrations & mouvement</h3>
+          <div class="dice-style-options">
+            <label class="dice-style-option">
+              <input type="checkbox" id="diceVibrationToggle" />
+              <div class="dice-style-option-text">
+                <div class="dice-style-option-title">Vibrations pendant le lancer</div>
+                <div class="dice-style-option-desc">Rythmées différemment selon l'animation choisie (appareils compatibles, Android principalement).</div>
+              </div>
+            </label>
+            <label class="dice-style-option">
+              <input type="checkbox" id="diceShakeToggle" />
+              <div class="dice-style-option-text">
+                <div class="dice-style-option-title">Secouer pour lancer</div>
+                <div class="dice-style-option-desc">Secouez le téléphone sur cette page pour relancer automatiquement (dernier nombre de dés utilisé). Sur iPhone, l'autorisation de mouvement peut être redemandée à chaque ouverture de l'app.</div>
+              </div>
+            </label>
+          </div>
+
           <div class="modal-actions">
             <button id="cancelDiceSettingsBtn" class="ghost-btn" type="button">Annuler</button>
             <button id="saveDiceSettingsBtn" class="primary-btn" type="button">Enregistrer</button>
@@ -1690,6 +1709,26 @@
       }
       let diceStyle = loadDiceStyle();
 
+      const DICE_VIBRATION_KEY = 'compagnon_dice_vibration_v1';
+      function loadDiceVibration() {
+        return localStorage.getItem(DICE_VIBRATION_KEY) !== 'off';
+      }
+      function saveDiceVibrationConfig(enabled) {
+        localStorage.setItem(DICE_VIBRATION_KEY, enabled ? 'on' : 'off');
+      }
+      let diceVibrationEnabled = loadDiceVibration();
+
+      const DICE_SHAKE_KEY = 'compagnon_dice_shake_v1';
+      function loadDiceShake() {
+        return localStorage.getItem(DICE_SHAKE_KEY) === 'on';
+      }
+      function saveDiceShakeConfig(enabled) {
+        localStorage.setItem(DICE_SHAKE_KEY, enabled ? 'on' : 'off');
+      }
+      let diceShakeEnabled = loadDiceShake();
+      let lastDiceCount = 2;
+      let diceRollInProgress = false;
+
       const homeScreen = document.getElementById('homeScreen');
       const appScreen = document.getElementById('appScreen');
 
@@ -1734,6 +1773,8 @@
       const cancelDiceSettingsBtn = document.getElementById('cancelDiceSettingsBtn');
       const saveDiceSettingsBtn = document.getElementById('saveDiceSettingsBtn');
       const diceStyleRadios = document.querySelectorAll('input[name="diceStyle"]');
+      const diceVibrationToggle = document.getElementById('diceVibrationToggle');
+      const diceShakeToggle = document.getElementById('diceShakeToggle');
 
       const sessionModal = document.getElementById('sessionModal');
       const sessionModalTitle = document.getElementById('sessionModalTitle');
@@ -2468,6 +2509,11 @@
         diceTotal.textContent = '…';
         diceCaption.textContent = 'Les dés roulent...';
 
+        // Vibration "classique" : 3 impulsions régulières sur toute la durée du tremblement.
+        if (diceVibrationEnabled && 'vibrate' in navigator) {
+          navigator.vibrate([30, 370, 30, 370, 30]);
+        }
+
         let count = 0;
         const flicker = setInterval(() => {
           renderDie(die1, randomDie());
@@ -2491,6 +2537,7 @@
             diceTotal.textContent = a;
             diceCaption.textContent = `Résultat : ${a}`;
           }
+          diceRollInProgress = false;
         }, 900);
       }
 
@@ -2502,15 +2549,18 @@
 
       // Séquence d'à-coups pour simuler un vrai lancer : chaque étape couvre une part
       // décroissante de la rotation totale sur une durée croissante → l'effet ralentit
-      // progressivement au lieu de tourner à vitesse constante.
+      // progressivement au lieu de tourner à vitesse constante. "pulse" est la durée
+      // (ms) de la petite vibration associée à cette étape : elle aussi grandit avec
+      // la décélération, pour rester au plus près du rythme visuel de la course du dé.
       const CUBE_TUMBLE_STEPS = [
-        { fraction: 0.30, duration: 130, ease: 'cubic-bezier(0.45,0,0.55,1)' },
-        { fraction: 0.24, duration: 160, ease: 'cubic-bezier(0.45,0,0.55,1)' },
-        { fraction: 0.18, duration: 210, ease: 'cubic-bezier(0.45,0,0.55,1)' },
-        { fraction: 0.13, duration: 280, ease: 'ease-out' },
-        { fraction: 0.10, duration: 390, ease: 'ease-out' },
-        { fraction: 0.05, duration: 490, ease: 'cubic-bezier(0.34,1.56,0.64,1)' }
+        { fraction: 0.30, duration: 130, ease: 'cubic-bezier(0.45,0,0.55,1)', pulse: 12 },
+        { fraction: 0.24, duration: 160, ease: 'cubic-bezier(0.45,0,0.55,1)', pulse: 14 },
+        { fraction: 0.18, duration: 210, ease: 'cubic-bezier(0.45,0,0.55,1)', pulse: 16 },
+        { fraction: 0.13, duration: 280, ease: 'ease-out', pulse: 18 },
+        { fraction: 0.10, duration: 390, ease: 'ease-out', pulse: 20 },
+        { fraction: 0.05, duration: 490, ease: 'cubic-bezier(0.34,1.56,0.64,1)', pulse: 24 }
       ];
+      const CUBE_LANDING_PULSE = 36; // vibration finale, plus marquée, au moment exact où CE dé s'arrête
 
       // Fractions normalisées et légèrement bruitées, pour que la vitesse ne soit
       // jamais parfaitement régulière ni identique d'un axe ou d'un dé à l'autre.
@@ -2538,6 +2588,7 @@
         let cumX = 0;
         let cumY = 0;
         let elapsed = 0;
+        const vibrationOk = diceVibrationEnabled && ('vibrate' in navigator);
 
         CUBE_TUMBLE_STEPS.forEach((step, i) => {
           cumX += fracX[i];
@@ -2551,10 +2602,19 @@
           setTimeout(() => {
             cubeEl.style.transition = `transform ${duration}ms ${step.ease}`;
             cubeEl.style.transform = `rotateX(${stepX}deg) rotateY(${stepY}deg)`;
+            // Petit à-coup de vibration au démarrage de chaque étape : la cadence colle
+            // ainsi au ralentissement visuel du cube (impulsions de moins en moins fréquentes).
+            if (vibrationOk) navigator.vibrate(step.pulse);
           }, startDelay + elapsed);
 
           elapsed += duration;
         });
+
+        // Vibration finale, propre à CE dé, exactement quand SON animation se termine
+        // (les deux dés n'ayant pas forcément la même durée totale).
+        setTimeout(() => {
+          if (vibrationOk) navigator.vibrate(CUBE_LANDING_PULSE);
+        }, startDelay + elapsed);
 
         cubeRotationState[stateKey] = { x: cur.x + totalDeltaX, y: cur.y + totalDeltaY };
 
@@ -2588,14 +2648,14 @@
             diceTotal.textContent = result1.value;
             diceCaption.textContent = `Résultat : ${result1.value}`;
           }
+          diceRollInProgress = false;
         }, waitFor);
       }
 
       function rollDice(diceCount) {
-        // 3 petites vibrations rythmées sur la durée de l'animation (si l'appareil le permet)
-        if ('vibrate' in navigator) {
-          navigator.vibrate([30, 370, 30, 370, 30]);
-        }
+        if (diceRollInProgress) return;
+        diceRollInProgress = true;
+        lastDiceCount = diceCount;
 
         if (diceStyle === 'cube3d') {
           rollCubeDice(diceCount);
@@ -2628,10 +2688,86 @@
         cubeStage.classList.toggle('hidden', !isCube);
       }
 
+      // ---- Secouer le téléphone pour lancer ----
+      let shakeListenerAttached = false;
+      let lastShakeX = null;
+      let lastShakeY = null;
+      let lastShakeZ = null;
+      let lastShakeTime = 0;
+      const SHAKE_THRESHOLD = 16;
+      const SHAKE_COOLDOWN_MS = 1200;
+
+      function handleDeviceMotion(e) {
+        const acc = e.accelerationIncludingGravity || e.acceleration;
+        if (!acc || acc.x === null || acc.y === null || acc.z === null) return;
+
+        if (lastShakeX !== null) {
+          const delta = Math.abs(acc.x - lastShakeX) + Math.abs(acc.y - lastShakeY) + Math.abs(acc.z - lastShakeZ);
+          const now = Date.now();
+          if (
+            delta > SHAKE_THRESHOLD &&
+            now - lastShakeTime > SHAKE_COOLDOWN_MS &&
+            !diceRollInProgress &&
+            currentPage === 2 &&
+            !appScreen.classList.contains('hidden')
+          ) {
+            lastShakeTime = now;
+            rollDice(lastDiceCount);
+          }
+        }
+        lastShakeX = acc.x;
+        lastShakeY = acc.y;
+        lastShakeZ = acc.z;
+      }
+
+      function enableShakeDetection() {
+        if (shakeListenerAttached) return;
+        window.addEventListener('devicemotion', handleDeviceMotion);
+        shakeListenerAttached = true;
+      }
+
+      function disableShakeDetection() {
+        if (!shakeListenerAttached) return;
+        window.removeEventListener('devicemotion', handleDeviceMotion);
+        shakeListenerAttached = false;
+      }
+
+      // iOS exige que la permission de mouvement soit redemandée à chaque session,
+      // depuis un geste utilisateur : on ne peut donc pas la réactiver silencieusement
+      // au chargement, contrairement à Android où aucune permission n'est nécessaire.
+      function requestShakePermissionAndEnable() {
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+          DeviceMotionEvent.requestPermission()
+            .then(state => {
+              const granted = state === 'granted';
+              diceShakeEnabled = granted;
+              saveDiceShakeConfig(granted);
+              if (granted) enableShakeDetection();
+            })
+            .catch(() => {
+              diceShakeEnabled = false;
+              saveDiceShakeConfig(false);
+            });
+        } else if (typeof DeviceMotionEvent !== 'undefined') {
+          diceShakeEnabled = true;
+          saveDiceShakeConfig(true);
+          enableShakeDetection();
+        } else {
+          diceShakeEnabled = false;
+          saveDiceShakeConfig(false);
+        }
+      }
+
+      if (diceShakeEnabled && typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission !== 'function') {
+        enableShakeDetection();
+      }
+
       function openDiceSettingsModal() {
         diceStyleRadios.forEach(r => {
           r.checked = (r.value === diceStyle);
         });
+        diceVibrationToggle.checked = diceVibrationEnabled;
+        diceShakeToggle.checked = diceShakeEnabled;
         diceSettingsModal.classList.add('open');
       }
 
@@ -2650,6 +2786,20 @@
         diceStyle = selected ? selected.value : 'classic';
         saveDiceStyleConfig(diceStyle);
         applyDiceStyle();
+
+        diceVibrationEnabled = diceVibrationToggle.checked;
+        saveDiceVibrationConfig(diceVibrationEnabled);
+
+        if (diceShakeToggle.checked) {
+          // Le clic sur "Enregistrer" est lui-même le geste utilisateur requis par iOS
+          // pour autoriser l'accès au capteur de mouvement.
+          requestShakePermissionAndEnable();
+        } else {
+          diceShakeEnabled = false;
+          saveDiceShakeConfig(false);
+          disableShakeDetection();
+        }
+
         closeDiceSettingsModal();
       });
 
